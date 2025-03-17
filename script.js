@@ -87,36 +87,119 @@ const notesList = document.getElementById('notesList');
 const addMagicalItemBtn = document.getElementById('addMagicalItemBtn');
 const addNoteBtn = document.getElementById('addNoteBtn');
 
+// Debug logging for DOM elements
+console.log('DOM Elements:', {
+    addCharacterBtn,
+    characterSelect,
+    deleteCharacterBtn,
+    saveCharacterBtn,
+    characterName,
+    profession,
+    advancedProfession,
+    magicalItemsList,
+    notesList,
+    addMagicalItemBtn,
+    addNoteBtn
+});
+
 // Initialize the application
 function init() {
-    updateCharacterSelect();
-    setupEventListeners();
+    console.log('Initializing application...');
+    
+    // Wait for Chart.js to be available
+    if (typeof Chart === 'undefined') {
+        console.error('Chart.js not loaded');
+        return;
+    }
+    
+    // Initialize charts first
     initializeCharts();
+    
+    // Then update character select
+    updateCharacterSelect();
+    
+    // Finally setup event listeners
+    setupEventListeners();
+    
+    console.log('Application initialized');
 }
 
 // Setup event listeners
 function setupEventListeners() {
-    addCharacterBtn.addEventListener('click', createNewCharacter);
-    characterSelect.addEventListener('change', loadCharacter);
-    deleteCharacterBtn.addEventListener('click', deleteCurrentCharacter);
+    console.log('Setting up event listeners...');
+    
+    // Remove any existing event listeners
+    addCharacterBtn.replaceWith(addCharacterBtn.cloneNode(true));
+    characterSelect.replaceWith(characterSelect.cloneNode(true));
+    deleteCharacterBtn.replaceWith(deleteCharacterBtn.cloneNode(true));
+    saveCharacterBtn.replaceWith(saveCharacterBtn.cloneNode(true));
+    addMagicalItemBtn.replaceWith(addMagicalItemBtn.cloneNode(true));
+    addNoteBtn.replaceWith(addNoteBtn.cloneNode(true));
+    
+    // Get fresh references to the elements
+    const addCharacterBtn = document.getElementById('addCharacterBtn');
+    const characterSelect = document.getElementById('characterSelect');
+    const deleteCharacterBtn = document.getElementById('deleteCharacterBtn');
+    const saveCharacterBtn = document.getElementById('saveCharacterBtn');
+    const addMagicalItemBtn = document.getElementById('addMagicalItemBtn');
+    const addNoteBtn = document.getElementById('addNoteBtn');
+    
+    // Add event listeners
+    addCharacterBtn.addEventListener('click', () => {
+        console.log('Add character button clicked');
+        createNewCharacter();
+    });
+    
+    characterSelect.addEventListener('change', (e) => {
+        console.log('Character select changed:', e.target.value);
+        loadCharacter(e.target.value);
+    });
+    
+    deleteCharacterBtn.addEventListener('click', () => {
+        console.log('Delete character button clicked');
+        deleteCurrentCharacter();
+    });
+    
     saveCharacterBtn.addEventListener('click', () => {
+        console.log('Save character button clicked');
         saveCurrentCharacter();
         showSaveNotification();
     });
-    addMagicalItemBtn.addEventListener('click', () => addMagicalItem());
-    addNoteBtn.addEventListener('click', () => addNote());
+    
+    addMagicalItemBtn.addEventListener('click', () => {
+        console.log('Add magical item button clicked');
+        addMagicalItem();
+    });
+    
+    addNoteBtn.addEventListener('click', () => {
+        console.log('Add note button clicked');
+        addNote();
+    });
 
-    // Remove auto-save from input changes
+    // Add input event listeners
     characterName.addEventListener('input', () => {
+        console.log('Character name changed');
         saveCharacterBtn.classList.add('unsaved-changes');
     });
+    
     profession.addEventListener('input', () => {
+        console.log('Profession changed');
         saveCharacterBtn.classList.add('unsaved-changes');
     });
+    
     advancedProfession.addEventListener('input', () => {
+        console.log('Advanced profession changed');
         saveCharacterBtn.classList.add('unsaved-changes');
     });
+    
+    console.log('Event listeners setup complete');
 }
+
+// Wait for both DOM and Chart.js to be ready
+window.addEventListener('load', () => {
+    console.log('Window loaded, initializing application...');
+    init();
+});
 
 // Initialize radar charts
 function initializeCharts() {
@@ -671,12 +754,18 @@ function addNote(noteData = {}) {
 
 // Save current character data
 function saveCurrentCharacter() {
-    if (!currentCharacter) return;
+    console.log('Saving current character...');
+    if (!currentCharacter) {
+        console.log('No current character to save');
+        return;
+    }
 
     // Update character data
     currentCharacter.name = characterName.value;
     currentCharacter.profession = profession.value;
     currentCharacter.advancedProfession = advancedProfession.value;
+
+    console.log('Updated character data:', currentCharacter);
 
     // Save magical items with modifiers
     currentCharacter.magicalItems = Array.from(magicalItemsList.children).map(item => ({
@@ -708,6 +797,7 @@ function saveCurrentCharacter() {
     
     // Remove unsaved changes indicator
     saveCharacterBtn.classList.remove('unsaved-changes');
+    console.log('Character saved successfully');
 }
 
 // Get modifiers from a container
@@ -798,9 +888,14 @@ function calculateAverageRating(stats) {
 
 // Delete current character
 function deleteCurrentCharacter() {
-    if (!currentCharacter) return;
+    console.log('Attempting to delete character...');
+    if (!currentCharacter) {
+        console.log('No current character to delete');
+        return;
+    }
     
     if (confirm('Are you sure you want to delete this character? This action cannot be undone.')) {
+        console.log('Deleting character:', currentCharacter.id);
         // Remove character from array
         characters = characters.filter(char => char.id !== currentCharacter.id);
         
@@ -833,8 +928,6 @@ function deleteCurrentCharacter() {
         
         // Remove unsaved changes indicator
         saveCharacterBtn.classList.remove('unsaved-changes');
+        console.log('Character deleted successfully');
     }
-}
-
-// Initialize the application when the page loads
-document.addEventListener('DOMContentLoaded', init); 
+} 
