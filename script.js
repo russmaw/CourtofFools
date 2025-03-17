@@ -696,7 +696,34 @@ function cleanupCharacterData(character) {
     return character;
 }
 
-// Load character data
+// Update stats breakdown display
+function updateStatsBreakdown() {
+    if (!currentCharacter) return;
+
+    // Update Heroic stats breakdown
+    const heroicBreakdown = document.getElementById('heroicStatsBreakdown');
+    if (heroicBreakdown) {
+        heroicBreakdown.innerHTML = HEROIC_STATS.map(stat => `
+            <div class="stat-item">
+                <span>${stat}</span>
+                <span>${currentCharacter.heroicStats[stat]}</span>
+            </div>
+        `).join('');
+    }
+
+    // Update Meat stats breakdown
+    const meatBreakdown = document.getElementById('meatStatsBreakdown');
+    if (meatBreakdown) {
+        meatBreakdown.innerHTML = MEAT_STATS.map(stat => `
+            <div class="stat-item">
+                <span>${stat}</span>
+                <span>${currentCharacter.meatStats[stat]}</span>
+            </div>
+        `).join('');
+    }
+}
+
+// Modify loadCharacter function to include stats breakdown update
 function loadCharacter(characterId) {
     console.log('Loading character:', characterId);
     
@@ -732,6 +759,9 @@ function loadCharacter(characterId) {
     // Update charts
     updateChart(heroicStatsChart, currentCharacter.heroicStats, HEROIC_STATS);
     updateChart(meatStatsChart, currentCharacter.meatStats, MEAT_STATS);
+
+    // Update stats breakdown
+    updateStatsBreakdown();
 
     // Update magical items
     if (elements.magicalItemsList) {

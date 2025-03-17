@@ -271,85 +271,169 @@ select {
     }
 }
 
-/* Print Styles */
+/* Print styles */
 @media print {
+    /* Hide non-printable elements */
+    .no-print {
+        display: none !important;
+    }
+
+    /* Reset page margins and background */
+    @page {
+        margin: 1cm;
+        size: A4;
+    }
+
     body {
-        background-color: white;
-        background-image: none;
-    }
-
-    .container {
-        max-width: none;
+        background: white;
+        color: black;
+        font-size: 12pt;
+        line-height: 1.5;
+        margin: 0;
         padding: 0;
     }
 
-    .character-profile {
-        box-shadow: none;
-        padding: 0;
-        border: none;
-    }
-
-    button {
-        display: none;
-    }
-
-    /* Profile header and basic info */
-    .profile-header {
-        margin-bottom: 0;
-        border-bottom: 1px solid #000;
-        padding-bottom: 1rem;
-        page-break-after: avoid;
-    }
-
-    .basic-info {
-        margin-bottom: 0;
-        page-break-after: avoid;
-    }
-
-    /* Overall rating positioning */
-    .overall-rating {
-        position: relative;
-        width: 100%;
-        margin: 2rem 0;
-        padding: 2rem;
-        background-color: white;
-        border: 2px solid #000;
-        border-radius: 0;
-        page-break-after: always;
+    /* Title section */
+    .title-section {
         text-align: center;
+        margin-bottom: 2rem;
+        page-break-after: avoid;
+    }
+
+    .title-section h1 {
+        font-size: 24pt;
+        margin: 0;
+        color: #c41e3a;
+    }
+
+    /* Character info section */
+    .character-info {
+        margin-bottom: 2rem;
+        page-break-after: avoid;
+    }
+
+    .character-info h2 {
+        font-size: 18pt;
+        margin: 0 0 1rem 0;
+        color: #c41e3a;
+    }
+
+    .character-info p {
+        margin: 0.5rem 0;
+    }
+
+    /* Overall rating section */
+    .overall-rating {
+        margin-bottom: 2rem;
+        page-break-after: avoid;
     }
 
     .overall-rating h2 {
-        margin-bottom: 1rem;
-        font-size: 2rem;
-        text-transform: uppercase;
-        letter-spacing: 2px;
+        font-size: 18pt;
+        margin: 0 0 1rem 0;
+        color: #c41e3a;
     }
 
-    .rating-display {
-        font-size: 2.5rem;
-        margin: 1rem 0;
+    .overall-rating p {
+        margin: 0.5rem 0;
+        font-size: 14pt;
+    }
+
+    /* Charts section */
+    .charts-section {
+        margin-bottom: 2rem;
+        page-break-after: avoid;
+    }
+
+    .charts-section h2 {
+        font-size: 18pt;
+        margin: 0 0 1rem 0;
+        color: #c41e3a;
+    }
+
+    .chart-container {
+        margin-bottom: 2rem;
+        page-break-inside: avoid;
+    }
+
+    .chart-container canvas {
+        max-width: 100%;
+        height: auto !important;
+    }
+
+    /* Stats breakdown section */
+    .stats-breakdown {
+        margin-bottom: 2rem;
+        page-break-after: avoid;
+    }
+
+    .stats-breakdown h2 {
+        font-size: 18pt;
+        margin: 0 0 1rem 0;
+        color: #c41e3a;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .stats-column h3 {
+        font-size: 16pt;
+        margin: 0 0 1rem 0;
+        color: #c41e3a;
+    }
+
+    .stat-item {
+        margin: 0.5rem 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .stat-item span {
         font-weight: bold;
     }
 
-    /* Stats container and other sections */
-    .stats-container {
-        page-break-inside: avoid;
-        margin-top: 2rem;
+    /* Magical items and notes section */
+    .items-notes-section {
+        margin-bottom: 2rem;
     }
 
-    .magical-items, .notes-section {
-        page-break-inside: avoid;
+    .items-notes-section h2 {
+        font-size: 18pt;
+        margin: 0 0 1rem 0;
+        color: #c41e3a;
     }
 
-    header::before {
+    .magical-item, .note {
+        margin-bottom: 1.5rem;
+        page-break-inside: avoid;
+        border: 1px solid #ddd;
+        padding: 1rem;
+        border-radius: 4px;
+    }
+
+    .magical-item h3, .note h3 {
+        font-size: 14pt;
+        margin: 0 0 0.5rem 0;
+        color: #c41e3a;
+    }
+
+    .magical-item p, .note p {
+        margin: 0.5rem 0;
+    }
+
+    /* Hide modifier sections in print */
+    .stat-modifiers {
         display: none;
     }
 
-    /* Ensure charts are properly sized for print */
-    canvas {
-        max-width: 100% !important;
-        height: auto !important;
+    /* Hide delete buttons in print */
+    .delete-btn {
+        display: none;
     }
 }
 

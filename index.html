@@ -5,68 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mythic Adventures Bingo Book</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
-        <header>
+        <div class="title-section">
             <h1>Mythic Adventures Bingo Book</h1>
-            <div class="header-buttons">
-                <button id="printBtn" class="secondary-btn">Print Character</button>
-                <button id="addCharacterBtn" class="primary-btn">Add New Character</button>
-            </div>
-        </header>
+        </div>
 
-        <div class="character-selector">
-            <div class="character-controls">
-                <select id="characterSelect" class="character-selector">
-                    <option value="">Select a Character</option>
-                </select>
-                <button id="saveCharacterBtn" class="primary-btn">Save Changes</button>
-                <button id="deleteCharacterBtn" class="delete-btn">Delete Character</button>
-            </div>
+        <div class="character-select-container">
+            <button id="addCharacterBtn" class="action-btn">Add New Character</button>
+            <button id="printBtn" class="action-btn">Print Character</button>
+            <button id="deleteCharacterBtn" class="action-btn delete-btn">Delete Character</button>
         </div>
 
         <div class="character-profile" id="characterProfile">
-            <div class="profile-header">
+            <div class="character-info">
+                <h2>Character Information</h2>
                 <div class="basic-info">
-                    <input type="text" id="characterName" placeholder="Character Name" class="profile-input">
-                    <input type="text" id="profession" placeholder="Profession" class="profile-input">
-                    <input type="text" id="advancedProfession" placeholder="Advanced Profession" class="profile-input">
-                </div>
-            </div>
-
-            <div class="stats-container">
-                <div class="stats-section">
-                    <h2>Heroic</h2>
-                    <canvas id="heroicStatsChart"></canvas>
-                </div>
-                <div class="stats-section">
-                    <h2>Meat</h2>
-                    <canvas id="meatStatsChart"></canvas>
+                    <input type="text" id="characterName" placeholder="Character Name">
+                    <input type="text" id="profession" placeholder="Profession">
+                    <input type="text" id="advancedProfession" placeholder="Advanced Profession">
                 </div>
             </div>
 
             <div class="overall-rating">
-                <h2>Overall Rating</h2>
-                <div id="heroicRating" class="rating-display"></div>
-                <div id="meatRating" class="rating-display"></div>
+                <h2>Overall Ratings</h2>
+                <p id="heroicRating"></p>
+                <p id="meatRating"></p>
             </div>
 
-            <div class="magical-items">
-                <h2>Magical Items</h2>
-                <div id="magicalItemsList"></div>
-                <button id="addMagicalItemBtn" class="secondary-btn">Add Magical Item</button>
+            <div class="charts-section">
+                <h2>Character Stats</h2>
+                <div class="chart-container">
+                    <canvas id="heroicStatsChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="meatStatsChart"></canvas>
+                </div>
             </div>
 
-            <div class="notes-section">
-                <h2>Additional Notes</h2>
-                <div id="notesList"></div>
-                <button id="addNoteBtn" class="secondary-btn">Add Note</button>
+            <div class="stats-breakdown">
+                <h2>Stats Breakdown</h2>
+                <div class="stats-grid">
+                    <div class="stats-column">
+                        <h3>Heroic Stats</h3>
+                        <div id="heroicStatsBreakdown"></div>
+                    </div>
+                    <div class="stats-column">
+                        <h3>Meat Stats</h3>
+                        <div id="meatStatsBreakdown"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="items-notes-section">
+                <h2>Magical Items & Notes</h2>
+                <div class="magical-items">
+                    <h3>Magical Items</h3>
+                    <button id="addMagicalItemBtn" class="action-btn">Add Magical Item</button>
+                    <div id="magicalItemsList"></div>
+                </div>
+                <div class="notes-section">
+                    <h3>Notes</h3>
+                    <button id="addNoteBtn" class="action-btn">Add Note</button>
+                    <div id="notesList"></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="script.js" defer></script>
+    <button id="saveCharacterBtn" class="save-btn">Save Changes</button>
+    <script src="script.js"></script>
 </body>
 </html> 
