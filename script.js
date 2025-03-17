@@ -206,6 +206,10 @@ function initializeCharts() {
         meatStatsChart.destroy();
     }
 
+    // Remove existing stat dropdowns if they exist
+    const existingDropdowns = document.querySelectorAll('.stat-dropdowns');
+    existingDropdowns.forEach(dropdown => dropdown.remove());
+
     const heroicConfig = {
         type: 'radar',
         data: {
@@ -495,8 +499,19 @@ function createNewCharacter() {
 
     characters.push(newCharacter);
     saveCharacters();
+    
+    // Set as current character immediately
+    currentCharacter = newCharacter;
+    
+    // Update UI
     updateCharacterSelect();
     loadCharacter(newCharacter.id);
+    
+    // Focus the name input
+    const characterName = document.getElementById('characterName');
+    if (characterName) {
+        characterName.focus();
+    }
 }
 
 // Update character select dropdown
@@ -527,67 +542,15 @@ function createCustomDropdown() {
     select.className = 'character-selector';
     select.innerHTML = '<option value="">Select a Character</option>';
     
-    // Create the custom options container
-    const optionsContainer = document.createElement('div');
-    optionsContainer.className = 'custom-options';
-    
-    // Add options with delete buttons
+    // Add options
     characters.forEach(char => {
-        const optionWrapper = document.createElement('div');
-        optionWrapper.className = 'custom-option';
-        
-        const optionText = document.createElement('span');
-        optionText.textContent = char.name || 'Unnamed Character';
-        optionText.onclick = () => {
-            select.value = char.id;
-            // Create and dispatch a change event
-            const event = new Event('change', { bubbles: true });
-            select.dispatchEvent(event);
-            optionsContainer.classList.remove('show');
-        };
-        
-        const deleteBtn = document.createElement('span');
-        deleteBtn.className = 'delete-option';
-        deleteBtn.innerHTML = '×';
-        deleteBtn.onclick = (e) => {
-            e.stopPropagation();
-            if (confirm('Are you sure you want to delete this character?')) {
-                // Remove character from array
-                characters = characters.filter(c => c.id !== char.id);
-                
-                // Save to localStorage
-                saveCharacters();
-                
-                // If this was the current character, clear it
-                if (currentCharacter && currentCharacter.id === char.id) {
-                    currentCharacter = null;
-                    loadCharacter(null);
-                }
-                
-                // Recreate the dropdown
-                createCustomDropdown();
-            }
-        };
-        
-        optionWrapper.appendChild(optionText);
-        optionWrapper.appendChild(deleteBtn);
-        optionsContainer.appendChild(optionWrapper);
-    });
-    
-    // Add click handler to show/hide options
-    select.onclick = () => {
-        optionsContainer.classList.toggle('show');
-    };
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!wrapper.contains(e.target)) {
-            optionsContainer.classList.remove('show');
-        }
+        const option = document.createElement('option');
+        option.value = char.id;
+        option.textContent = char.name || 'Unnamed Character';
+        select.appendChild(option);
     });
     
     wrapper.appendChild(select);
-    wrapper.appendChild(optionsContainer);
     
     // Replace the old select with the new wrapper
     const oldSelect = document.getElementById('characterSelect');
@@ -597,7 +560,7 @@ function createCustomDropdown() {
         document.querySelector('.character-select-container').appendChild(wrapper);
     }
     
-    // Add change event listener to the new select
+    // Add change event listener to the select
     select.addEventListener('change', (e) => {
         console.log('Character select changed:', e.target.value);
         loadCharacter(e.target.value);
@@ -606,37 +569,65 @@ function createCustomDropdown() {
 
 // Load character data
 function loadCharacter(characterId) {
-    if (!characterId) return;
+    console.log('Loading character:', characterId);
     
-    currentCharacter = characters.find(char => char.id === (typeof characterId === 'string' ? parseInt(characterId) : characterId));
-    if (!currentCharacter) return;
+    if (!characterId) {
+        console.log('No character ID provided');
+        currentCharacter = null;
+        return;
+    }
+    
+    // Convert string ID to number if needed
+    const id = typeof characterId === 'string' ? parseInt(characterId) : characterId;
+    console.log('Looking for character with ID:', id);
+    
+    currentCharacter = characters.find(char => char.id === id);
+    console.log('Found character:', currentCharacter);
+    
+    if (!currentCharacter) {
+        console.log('No character found with ID:', id);
+        return;
+    }
 
     // Update form fields
-    characterName.value = currentCharacter.name || '';
-    profession.value = currentCharacter.profession || '';
-    advancedProfession.value = currentCharacter.advancedProfession || '';
+    const characterName = document.getElementById('characterName');
+    const profession = document.getElementById('profession');
+    const advancedProfession = document.getElementById('advancedProfession');
+    const magicalItemsList = document.getElementById('magicalItemsList');
+    const notesList = document.getElementById('notesList');
+    const saveCharacterBtn = document.getElementById('saveCharacterBtn');
+
+    if (characterName) characterName.value = currentCharacter.name || '';
+    if (profession) profession.value = currentCharacter.profession || '';
+    if (advancedProfession) advancedProfession.value = currentCharacter.advancedProfession || '';
 
     // Update charts
     updateChart(heroicStatsChart, currentCharacter.heroicStats, HEROIC_STATS);
     updateChart(meatStatsChart, currentCharacter.meatStats, MEAT_STATS);
 
     // Update magical items
-    magicalItemsList.innerHTML = '';
-    currentCharacter.magicalItems.forEach(item => {
-        addMagicalItem(item);
-    });
+    if (magicalItemsList) {
+        magicalItemsList.innerHTML = '';
+        currentCharacter.magicalItems.forEach(item => {
+            addMagicalItem(item);
+        });
+    }
 
     // Update notes
-    notesList.innerHTML = '';
-    currentCharacter.notes.forEach(note => {
-        addNote(note);
-    });
+    if (notesList) {
+        notesList.innerHTML = '';
+        currentCharacter.notes.forEach(note => {
+            addNote(note);
+        });
+    }
 
     // Update overall ratings
     updateOverallRatings(currentCharacter);
     
     // Remove unsaved changes indicator
-    saveCharacterBtn.classList.remove('unsaved-changes');
+    if (saveCharacterBtn) saveCharacterBtn.classList.remove('unsaved-changes');
+    
+    console.log('Character loaded successfully');
 }
 
 // Show save notification
