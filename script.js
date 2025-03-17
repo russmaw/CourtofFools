@@ -1517,6 +1517,12 @@ function handleAdvancedProfessionChange() {
 function generatePDF() {
     if (!currentCharacter) return;
 
+    // Check if html2pdf is available
+    if (typeof html2pdf === 'undefined') {
+        alert('PDF generation is not available at the moment. Please try again in a few seconds.');
+        return;
+    }
+
     // Create a temporary container for the PDF content
     const container = document.createElement('div');
     container.className = 'pdf-container';
