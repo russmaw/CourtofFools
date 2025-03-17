@@ -144,6 +144,34 @@ function init() {
     setupAutoSave();
 }
 
+// Load saved characters from localStorage
+function loadSavedCharacters() {
+    console.log('Loading saved characters...');
+    try {
+        const savedCharacters = localStorage.getItem('characters');
+        if (savedCharacters) {
+            characters = JSON.parse(savedCharacters);
+            console.log('Loaded characters:', characters);
+            
+            // Clean up any old character data
+            characters = characters.map(cleanupCharacterData);
+            
+            // Update the character select dropdown
+            updateCharacterSelect();
+            
+            // If there are characters, load the first one
+            if (characters.length > 0) {
+                loadCharacter(characters[0].id);
+            }
+        } else {
+            console.log('No saved characters found');
+        }
+    } catch (error) {
+        console.error('Error loading characters:', error);
+        characters = [];
+    }
+}
+
 // Setup event listeners
 function setupEventListeners() {
     console.log('Setting up event listeners...');
