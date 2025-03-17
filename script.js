@@ -1559,11 +1559,35 @@ function generatePDF() {
         }
     };
     
-    // Generate the PDF
-    html2pdf().set(opt).from(container).save().then(() => {
-        // Clean up the temporary container
-        container.remove();
-    });
+    // Check if running on iOS
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    
+    if (isIOS) {
+        // For iOS, generate the PDF and create a data URL
+        html2pdf().set(opt).from(container).outputPdf().then(pdf => {
+            // Create a data URL from the PDF
+            const pdfDataUrl = URL.createObjectURL(new Blob([pdf], { type: 'application/pdf' }));
+            
+            // Create a temporary link element
+            const link = document.createElement('a');
+            link.href = pdfDataUrl;
+            link.download = `${currentCharacter.name || 'character'}-profile.pdf`;
+            
+            // Trigger the download
+            document.body.appendChild(link);
+            link.click();
+            
+            // Clean up
+            document.body.removeChild(link);
+            URL.revokeObjectURL(pdfDataUrl);
+            container.remove();
+        });
+    } else {
+        // For other devices, use the standard save method
+        html2pdf().set(opt).from(container).save().then(() => {
+            container.remove();
+        });
+    }
 }
 
 document.addEventListener('DOMContentLoaded', init); 
