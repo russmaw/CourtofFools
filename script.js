@@ -542,11 +542,20 @@ function createCustomDropdown() {
     select.className = 'character-selector';
     select.innerHTML = '<option value="">Select a Character</option>';
     
-    // Add options
+    // Add options with more detailed information
     characters.forEach(char => {
         const option = document.createElement('option');
         option.value = char.id;
-        option.textContent = char.name || 'Unnamed Character';
+        
+        // Create a formatted display string
+        let displayText = char.name || 'Unnamed Character';
+        if (char.profession || char.advancedProfession) {
+            displayText += ' - ';
+            if (char.profession) displayText += char.profession;
+            if (char.advancedProfession) displayText += ` (${char.advancedProfession})`;
+        }
+        
+        option.textContent = displayText;
         select.appendChild(option);
     });
     
