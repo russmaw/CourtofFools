@@ -11,6 +11,34 @@ const RATING_SYSTEM = {
     'SSS': { value: 9, description: 'Mythic - Unprecedented power or ability, unique in the world' }
 };
 
+// Stats categories and their types
+const STAT_TYPES = {
+    'Damage Output': 'physical',
+    'Accessible Resources': 'social',
+    'Allies': 'social',
+    'Stealth': 'physical',
+    'Magic': 'physical',
+    'Tactics': 'social',
+    'Durability': 'physical',
+    'Range': 'physical',
+    'Fighting Prowess': 'physical',
+    'Likeability': 'social',
+    'Intelligence': 'social',
+    'Speed': 'physical'
+};
+
+// Color scheme for stat types
+const STAT_COLORS = {
+    physical: {
+        background: 'rgba(196, 30, 58, 0.2)',
+        border: 'rgba(196, 30, 58, 1)'
+    },
+    social: {
+        background: 'rgba(54, 162, 235, 0.2)',
+        border: 'rgba(54, 162, 235, 1)'
+    }
+};
+
 // Stats categories
 const HEROIC_STATS = [
     'Damage Output',
@@ -88,8 +116,8 @@ function initializeCharts() {
             datasets: [{
                 label: 'Heroic',
                 data: Array(HEROIC_STATS.length).fill(1), // Start with F rating
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: HEROIC_STATS.map(stat => STAT_COLORS[STAT_TYPES[stat]].background),
+                borderColor: HEROIC_STATS.map(stat => STAT_COLORS[STAT_TYPES[stat]].border),
                 borderWidth: 2
             }]
         },
@@ -114,13 +142,22 @@ function initializeCharts() {
                             const rating = Object.keys(RATING_SYSTEM).find(key => 
                                 RATING_SYSTEM[key].value === context.raw
                             );
-                            return `${rating}: ${RATING_SYSTEM[rating].description}`;
+                            const statType = STAT_TYPES[context.label];
+                            return [
+                                `Type: ${statType.charAt(0).toUpperCase() + statType.slice(1)}`,
+                                `Rating: ${rating}`,
+                                RATING_SYSTEM[rating].description
+                            ];
                         }
                     }
                 }
             },
-            onClick: function(event, elements) {
-                const chart = this;
+            onClick: function(event, elements, chart) {
+                const rect = chart.canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                
+                // Get the clicked point in the chart
                 const points = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
                 
                 if (points.length) {
@@ -129,13 +166,16 @@ function initializeCharts() {
                     const index = point.index;
                     
                     // Show rating selector
-                    showRatingSelector(event.x, event.y, (rating) => {
-                        const currentValue = chart.data.datasets[datasetIndex].data[index];
+                    showRatingSelector(event.clientX, event.clientY, (rating) => {
                         chart.data.datasets[datasetIndex].data[index] = RATING_SYSTEM[rating].value;
                         chart.update();
                         
                         // Save the changes
-                        currentCharacter.heroicStats[HEROIC_STATS[index]] = rating;
+                        if (chart === heroicStatsChart) {
+                            currentCharacter.heroicStats[HEROIC_STATS[index]] = rating;
+                        } else {
+                            currentCharacter.meatStats[MEAT_STATS[index]] = rating;
+                        }
                         saveCurrentCharacter();
                         updateOverallRatings(currentCharacter);
                     });
@@ -151,8 +191,8 @@ function initializeCharts() {
             datasets: [{
                 label: 'Meat',
                 data: Array(MEAT_STATS.length).fill(1), // Start with F rating
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: MEAT_STATS.map(stat => STAT_COLORS[STAT_TYPES[stat]].background),
+                borderColor: MEAT_STATS.map(stat => STAT_COLORS[STAT_TYPES[stat]].border),
                 borderWidth: 2
             }]
         },
@@ -177,13 +217,22 @@ function initializeCharts() {
                             const rating = Object.keys(RATING_SYSTEM).find(key => 
                                 RATING_SYSTEM[key].value === context.raw
                             );
-                            return `${rating}: ${RATING_SYSTEM[rating].description}`;
+                            const statType = STAT_TYPES[context.label];
+                            return [
+                                `Type: ${statType.charAt(0).toUpperCase() + statType.slice(1)}`,
+                                `Rating: ${rating}`,
+                                RATING_SYSTEM[rating].description
+                            ];
                         }
                     }
                 }
             },
-            onClick: function(event, elements) {
-                const chart = this;
+            onClick: function(event, elements, chart) {
+                const rect = chart.canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                
+                // Get the clicked point in the chart
                 const points = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
                 
                 if (points.length) {
@@ -192,13 +241,16 @@ function initializeCharts() {
                     const index = point.index;
                     
                     // Show rating selector
-                    showRatingSelector(event.x, event.y, (rating) => {
-                        const currentValue = chart.data.datasets[datasetIndex].data[index];
+                    showRatingSelector(event.clientX, event.clientY, (rating) => {
                         chart.data.datasets[datasetIndex].data[index] = RATING_SYSTEM[rating].value;
                         chart.update();
                         
                         // Save the changes
-                        currentCharacter.meatStats[MEAT_STATS[index]] = rating;
+                        if (chart === heroicStatsChart) {
+                            currentCharacter.heroicStats[HEROIC_STATS[index]] = rating;
+                        } else {
+                            currentCharacter.meatStats[MEAT_STATS[index]] = rating;
+                        }
                         saveCurrentCharacter();
                         updateOverallRatings(currentCharacter);
                     });
