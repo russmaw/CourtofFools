@@ -1516,13 +1516,7 @@ function handleAdvancedProfessionChange() {
 // Generate PDF of character profile
 function generatePDF() {
     if (!currentCharacter) return;
-
-    // Check if html2pdf is available
-    if (typeof html2pdf === 'undefined') {
-        alert('PDF generation is not available at the moment. Please try again in a few seconds.');
-        return;
-    }
-
+    
     // Create a temporary container for the PDF content
     const container = document.createElement('div');
     container.className = 'pdf-container';
@@ -1548,54 +1542,35 @@ function generatePDF() {
     // Add the cloned profile to the container
     container.appendChild(profileClone);
     
-    // Configure PDF options
-    const opt = {
-        margin: 10,
-        filename: `${currentCharacter.name || 'character'}-profile.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { 
-            scale: 2,
-            useCORS: true,
-            logging: false
-        },
-        jsPDF: { 
-            unit: 'mm', 
-            format: 'a4', 
-            orientation: 'portrait' 
+    // Hide all other elements
+    const allElements = document.body.children;
+    Array.from(allElements).forEach(element => {
+        if (element !== container) {
+            element.style.display = 'none';
         }
-    };
+    });
     
-    // Check if running on iOS
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    // Show the container
+    container.style.display = 'block';
+    container.style.position = 'absolute';
+    container.style.left = '0';
+    container.style.top = '0';
+    container.style.width = '100%';
+    container.style.background = 'white';
+    container.style.color = 'black';
     
-    if (isIOS) {
-        // For iOS, generate the PDF and open it in a new window
-        html2pdf().set(opt).from(container).outputPdf().then(pdf => {
-            // Create a blob from the PDF
-            const blob = new Blob([pdf], { type: 'application/pdf' });
-            
-            // Create a URL for the blob
-            const url = URL.createObjectURL(blob);
-            
-            // Open the PDF in a new window
-            window.open(url, '_blank');
-            
-            // Clean up
-            setTimeout(() => {
-                URL.revokeObjectURL(url);
-                container.remove();
-            }, 1000);
-        });
-    } else {
-        // For PC, use the standard save method
-        html2pdf().set(opt).from(container).save().then(() => {
-            container.remove();
-        }).catch(error => {
-            console.error('PDF generation failed:', error);
-            alert('Failed to generate PDF. Please try again.');
-            container.remove();
-        });
-    }
+    // Print
+    window.print();
+    
+    // Restore visibility of all elements
+    Array.from(allElements).forEach(element => {
+        if (element !== container) {
+            element.style.display = '';
+        }
+    });
+    
+    // Remove the container
+    container.remove();
 }
 
 document.addEventListener('DOMContentLoaded', init); 
