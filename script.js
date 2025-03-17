@@ -567,6 +567,8 @@ function createCustomDropdown() {
     
     // Function to update dropdown options
     function updateDropdownOptions(sortBy = 'name') {
+        console.log('Updating dropdown options with sort:', sortBy);
+        
         // Clear existing options except the first one
         while (select.options.length > 1) {
             select.remove(1);
@@ -574,17 +576,29 @@ function createCustomDropdown() {
         
         // Create a copy of characters array for sorting
         const sortedCharacters = [...characters].sort((a, b) => {
+            let aValue, bValue;
+            
             switch (sortBy) {
                 case 'name':
-                    return (a.name || 'Unnamed Character').localeCompare(b.name || 'Unnamed Character');
+                    aValue = a.name || 'Unnamed Character';
+                    bValue = b.name || 'Unnamed Character';
+                    break;
                 case 'profession':
-                    return (a.profession || '').localeCompare(b.profession || '');
+                    aValue = a.profession || '';
+                    bValue = b.profession || '';
+                    break;
                 case 'advancedProfession':
-                    return (a.advancedProfession || '').localeCompare(b.advancedProfession || '');
+                    aValue = a.advancedProfession || '';
+                    bValue = b.advancedProfession || '';
+                    break;
                 default:
                     return 0;
             }
+            
+            return aValue.localeCompare(bValue);
         });
+        
+        console.log('Sorted characters:', sortedCharacters);
         
         // Add sorted options
         sortedCharacters.forEach(char => {
@@ -616,6 +630,7 @@ function createCustomDropdown() {
     const sortSelect = document.querySelector('.sort-select');
     if (sortSelect) {
         sortSelect.addEventListener('change', (e) => {
+            console.log('Sort select changed to:', e.target.value);
             updateDropdownOptions(e.target.value);
         });
     }
