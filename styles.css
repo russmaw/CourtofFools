@@ -278,6 +278,14 @@ select {
 
 /* Print styles */
 @media print {
+    /* Reset body styles for print */
+    body {
+        background: white !important;
+        color: black !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
     /* Hide elements that shouldn't be printed */
     .character-select-container,
     .character-controls,
@@ -289,7 +297,10 @@ select {
     .stat-dropdowns,
     .sort-control,
     .custom-dropdown-wrapper,
-    #saveCharacterBtn {
+    #saveCharacterBtn,
+    .header-buttons,
+    .action-btn,
+    .save-btn {
         display: none !important;
     }
 
@@ -303,72 +314,116 @@ select {
         background: white !important;
         color: black !important;
         box-shadow: none !important;
+        border: none !important;
     }
 
-    /* Ensure charts are visible and properly sized */
+    /* Basic info styling */
+    .basic-info {
+        margin-bottom: 20px !important;
+    }
+
+    .basic-info label {
+        display: block !important;
+        font-weight: bold !important;
+        margin-bottom: 5px !important;
+    }
+
+    .basic-info input {
+        display: block !important;
+        width: 100% !important;
+        border: none !important;
+        background: none !important;
+        padding: 0 !important;
+        margin-bottom: 10px !important;
+    }
+
+    /* Stats container styling */
+    .stats-container {
+        display: block !important;
+        margin: 20px 0 !important;
+        page-break-inside: avoid !important;
+    }
+
+    .stats-section {
+        margin-bottom: 20px !important;
+        page-break-inside: avoid !important;
+    }
+
+    /* Chart container styling */
     .chart-container {
         display: block !important;
         width: 100% !important;
         max-width: 450px !important;
         margin: 20px auto !important;
-        page-break-inside: avoid;
+        page-break-inside: avoid !important;
         background: white !important;
+        border: 1px solid #ddd !important;
     }
 
-    /* Ensure stats breakdown is visible */
+    /* Stats breakdown styling */
     .stats-breakdown {
         display: block !important;
         width: 100% !important;
-        max-width: none !important;
         margin: 20px 0 !important;
-        page-break-inside: avoid;
+        page-break-inside: avoid !important;
     }
 
-    /* Ensure magical items and notes are visible */
+    .stat-item {
+        display: flex !important;
+        justify-content: space-between !important;
+        padding: 5px 0 !important;
+        border-bottom: 1px solid #eee !important;
+    }
+
+    /* Magical items and notes styling */
     .magical-items,
     .notes-section {
         display: block !important;
         width: 100% !important;
-        max-width: none !important;
         margin: 20px 0 !important;
-        page-break-inside: avoid;
+        page-break-inside: avoid !important;
     }
 
-    /* Style inputs and textareas for print */
-    input[type="text"],
-    textarea {
-        border: none !important;
-        background: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        font-size: inherit !important;
-        color: black !important;
-    }
-
-    /* Remove background colors and adjust borders */
     .magical-item,
     .note {
         border: 1px solid #ddd !important;
         background: white !important;
         margin-bottom: 15px !important;
-        padding: 10px !important;
-        page-break-inside: avoid;
+        padding: 15px !important;
+        page-break-inside: avoid !important;
     }
 
-    /* Ensure proper spacing between sections */
-    .section {
-        margin-bottom: 20px !important;
-        page-break-inside: avoid;
+    .item-name,
+    .note-title {
+        font-weight: bold !important;
+        margin-bottom: 10px !important;
+        display: block !important;
+    }
+
+    .item-description,
+    .note-content {
+        margin-bottom: 10px !important;
+        display: block !important;
+    }
+
+    /* Overall ratings styling */
+    .overall-rating {
+        text-align: center !important;
+        margin: 20px 0 !important;
+        padding: 10px !important;
+        border: 1px solid #ddd !important;
+        page-break-inside: avoid !important;
+    }
+
+    .rating-display {
+        font-size: 1.5rem !important;
+        font-weight: bold !important;
+        margin: 10px 0 !important;
     }
 
     /* Remove any hover effects */
     *:hover {
         background: none !important;
-    }
-
-    /* Ensure proper page breaks */
-    .character-profile > * {
-        page-break-inside: avoid;
     }
 
     /* Remove any animations or transitions */
@@ -377,9 +432,107 @@ select {
         transition: none !important;
     }
 
+    /* Ensure proper page breaks */
+    .character-profile > * {
+        page-break-inside: avoid !important;
+    }
+
     /* Hide PDF container during normal print */
     .pdf-container {
         display: none !important;
+    }
+}
+
+/* PDF Generation Styles */
+.pdf-container {
+    position: fixed;
+    left: -9999px;
+    top: -9999px;
+    width: 210mm; /* A4 width */
+    padding: 20mm; /* A4 margins */
+    background: white;
+    box-sizing: border-box;
+}
+
+.pdf-container .character-profile {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+}
+
+.pdf-container .chart-container {
+    max-width: 100%;
+    margin: 20px auto;
+}
+
+.pdf-container .stat-dropdowns,
+.pdf-container .modifier-controls,
+.pdf-container .delete-btn,
+.pdf-container .save-btn,
+.pdf-container .add-modifier-btn,
+.pdf-container .remove-modifier-btn,
+.pdf-container .secondary-btn {
+    display: none;
+}
+
+.pdf-container .magical-item,
+.pdf-container .note {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+}
+
+.pdf-container .item-name,
+.pdf-container .note-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.pdf-container .item-description,
+.pdf-container .note-content {
+    margin-bottom: 10px;
+    display: block;
+}
+
+.pdf-container .stat-modifier {
+    display: inline-block;
+    margin-right: 15px;
+    margin-bottom: 5px;
+}
+
+.pdf-container .stat-modifier label {
+    margin-right: 5px;
+}
+
+.pdf-container .stat-modifier select {
+    display: none;
+}
+
+.pdf-container .stat-modifier::after {
+    content: attr(data-value);
+    margin-left: 5px;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    .pdf-container,
+    .pdf-container * {
+        visibility: visible;
+    }
+    .pdf-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        padding: 0;
     }
 }
 
@@ -756,98 +909,4 @@ select {
     width: 100%;
     max-width: 400px;
     margin: 0 auto var(--spacing);
-}
-
-/* PDF Generation Styles */
-.pdf-container {
-    position: fixed;
-    left: -9999px;
-    top: -9999px;
-    width: 210mm; /* A4 width */
-    padding: 20mm; /* A4 margins */
-    background: white;
-    box-sizing: border-box;
-}
-
-.pdf-container .character-profile {
-    width: 100%;
-    max-width: none;
-    margin: 0;
-    padding: 0;
-    box-shadow: none;
-}
-
-.pdf-container .chart-container {
-    max-width: 100%;
-    margin: 20px auto;
-}
-
-.pdf-container .stat-dropdowns,
-.pdf-container .modifier-controls,
-.pdf-container .delete-btn,
-.pdf-container .save-btn,
-.pdf-container .add-modifier-btn,
-.pdf-container .remove-modifier-btn,
-.pdf-container .secondary-btn {
-    display: none;
-}
-
-.pdf-container .magical-item,
-.pdf-container .note {
-    break-inside: avoid;
-    page-break-inside: avoid;
-    margin-bottom: 20px;
-    padding: 15px;
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-}
-
-.pdf-container .item-name,
-.pdf-container .note-title {
-    font-weight: bold;
-    margin-bottom: 10px;
-    display: block;
-}
-
-.pdf-container .item-description,
-.pdf-container .note-content {
-    margin-bottom: 10px;
-    display: block;
-}
-
-.pdf-container .stat-modifier {
-    display: inline-block;
-    margin-right: 15px;
-    margin-bottom: 5px;
-}
-
-.pdf-container .stat-modifier label {
-    margin-right: 5px;
-}
-
-.pdf-container .stat-modifier select {
-    display: none;
-}
-
-.pdf-container .stat-modifier::after {
-    content: attr(data-value);
-    margin-left: 5px;
-}
-
-@media print {
-    body * {
-        visibility: hidden;
-    }
-    .pdf-container,
-    .pdf-container * {
-        visibility: visible;
-    }
-    .pdf-container {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        padding: 0;
-    }
 } 

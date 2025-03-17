@@ -1556,8 +1556,11 @@ function generatePDF() {
     container.style.left = '0';
     container.style.top = '0';
     container.style.width = '100%';
+    container.style.height = '100%';
     container.style.background = 'white';
     container.style.color = 'black';
+    container.style.padding = '20mm';
+    container.style.boxSizing = 'border-box';
     
     // Print
     window.print();
