@@ -536,24 +536,28 @@ function createCustomDropdown() {
     const wrapper = document.createElement('div');
     wrapper.className = 'custom-dropdown-wrapper';
     
-    // Create sort control
-    const sortControl = document.createElement('div');
-    sortControl.className = 'sort-control';
-    
-    const sortLabel = document.createElement('label');
-    sortLabel.textContent = 'Sort by:';
-    
-    const sortSelect = document.createElement('select');
-    sortSelect.className = 'sort-select';
-    sortSelect.innerHTML = `
-        <option value="name">Name</option>
-        <option value="profession">Profession</option>
-        <option value="advancedProfession">Advanced Profession</option>
-    `;
-    
-    sortControl.appendChild(sortLabel);
-    sortControl.appendChild(sortSelect);
-    wrapper.appendChild(sortControl);
+    // Check if sort control already exists
+    const existingSortControl = document.querySelector('.sort-control');
+    if (!existingSortControl) {
+        // Create sort control only if it doesn't exist
+        const sortControl = document.createElement('div');
+        sortControl.className = 'sort-control';
+        
+        const sortLabel = document.createElement('label');
+        sortLabel.textContent = 'Sort by:';
+        
+        const sortSelect = document.createElement('select');
+        sortSelect.className = 'sort-select';
+        sortSelect.innerHTML = `
+            <option value="name">Name</option>
+            <option value="profession">Profession</option>
+            <option value="advancedProfession">Advanced Profession</option>
+        `;
+        
+        sortControl.appendChild(sortLabel);
+        sortControl.appendChild(sortSelect);
+        wrapper.appendChild(sortControl);
+    }
     
     // Create the main select element
     const select = document.createElement('select');
@@ -608,10 +612,13 @@ function createCustomDropdown() {
     // Initial population of options
     updateDropdownOptions();
     
-    // Add change event listener to sort select
-    sortSelect.addEventListener('change', (e) => {
-        updateDropdownOptions(e.target.value);
-    });
+    // Add change event listener to sort select if it exists
+    const sortSelect = document.querySelector('.sort-select');
+    if (sortSelect) {
+        sortSelect.addEventListener('change', (e) => {
+            updateDropdownOptions(e.target.value);
+        });
+    }
     
     wrapper.appendChild(select);
     
