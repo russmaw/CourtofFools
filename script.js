@@ -827,6 +827,12 @@ function deleteCurrentCharacter() {
         // Clear overall ratings
         document.getElementById('heroicRating').textContent = '';
         document.getElementById('meatRating').textContent = '';
+        
+        // Reset character select to default option
+        characterSelect.value = '';
+        
+        // Remove unsaved changes indicator
+        saveCharacterBtn.classList.remove('unsaved-changes');
     }
 }
 
