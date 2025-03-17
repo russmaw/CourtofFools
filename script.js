@@ -144,6 +144,54 @@ function init() {
     setupAutoSave();
 }
 
+// Set up auto-save functionality
+function setupAutoSave() {
+    let autoSaveTimeout;
+    const AUTO_SAVE_DELAY = 2000; // 2 seconds delay
+
+    // Function to trigger auto-save
+    function triggerAutoSave() {
+        if (currentCharacter && elements.saveCharacterBtn.classList.contains('unsaved-changes')) {
+            saveCurrentCharacter();
+        }
+    }
+
+    // Add input event listeners to all editable fields
+    const editableFields = [
+        elements.characterName,
+        elements.profession,
+        elements.advancedProfession
+    ];
+
+    editableFields.forEach(field => {
+        if (field) {
+            field.addEventListener('input', () => {
+                // Clear existing timeout
+                clearTimeout(autoSaveTimeout);
+                
+                // Set new timeout
+                autoSaveTimeout = setTimeout(triggerAutoSave, AUTO_SAVE_DELAY);
+            });
+        }
+    });
+
+    // Add change event listeners to all stat dropdowns
+    document.querySelectorAll('.stat-rating-select').forEach(select => {
+        select.addEventListener('change', () => {
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(triggerAutoSave, AUTO_SAVE_DELAY);
+        });
+    });
+
+    // Add change event listeners to all modifier selects
+    document.querySelectorAll('.modifier-select').forEach(select => {
+        select.addEventListener('change', () => {
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(triggerAutoSave, AUTO_SAVE_DELAY);
+        });
+    });
+}
+
 // Load saved characters from localStorage
 function loadSavedCharacters() {
     console.log('Loading saved characters...');
@@ -839,6 +887,7 @@ function addMagicalItem(itemData = {}) {
     const itemContainer = document.createElement('div');
     itemContainer.className = 'magical-item';
     
+    // Create name and description fields
     const itemName = document.createElement('input');
     itemName.type = 'text';
     itemName.className = 'item-name';
@@ -850,80 +899,102 @@ function addMagicalItem(itemData = {}) {
     itemDescription.placeholder = 'Item Description';
     itemDescription.value = itemData.description || '';
     
-    // Add stat modifiers section
+    // Create modifiers toggle button
+    const toggleModifiersBtn = document.createElement('button');
+    toggleModifiersBtn.className = 'toggle-modifiers-btn secondary-btn';
+    toggleModifiersBtn.textContent = 'Add Modifiers';
+    
+    // Create modifiers container (hidden by default)
+    const modifiersContainer = document.createElement('div');
+    modifiersContainer.className = 'modifiers-container';
+    modifiersContainer.style.display = 'none';
+    
+    // Create stat modifiers section
     const statModifiers = document.createElement('div');
     statModifiers.className = 'stat-modifiers';
     
-    // Heroic modifiers
+    // Create Heroic modifiers section
     const heroicModifiers = document.createElement('div');
     heroicModifiers.className = 'modifier-group';
     heroicModifiers.innerHTML = '<h4>Heroic Modifiers</h4>';
     
-    HEROIC_STATS.forEach(stat => {
-        const modifierContainer = document.createElement('div');
-        modifierContainer.className = 'stat-modifier';
-        
-        const label = document.createElement('label');
-        label.textContent = stat;
-        
-        const select = document.createElement('select');
-        select.className = 'modifier-select';
-        select.value = itemData.heroicModifiers?.[stat] || '0';
-        
-        // Add options from -2 to +2
-        for (let i = -2; i <= 2; i++) {
-            const option = document.createElement('option');
-            option.value = i;
-            option.textContent = i > 0 ? `+${i}` : i.toString();
-            select.appendChild(option);
-        }
-        
-        select.addEventListener('change', () => {
-            saveCurrentCharacter();
-            updateChartsWithModifiers();
-        });
-        
-        modifierContainer.appendChild(label);
-        modifierContainer.appendChild(select);
-        heroicModifiers.appendChild(modifierContainer);
-    });
-    
-    // Meat modifiers
+    // Create Meat modifiers section
     const meatModifiers = document.createElement('div');
     meatModifiers.className = 'modifier-group';
     meatModifiers.innerHTML = '<h4>Meat Modifiers</h4>';
     
-    MEAT_STATS.forEach(stat => {
-        const modifierContainer = document.createElement('div');
-        modifierContainer.className = 'stat-modifier';
-        
-        const label = document.createElement('label');
-        label.textContent = stat;
-        
-        const select = document.createElement('select');
-        select.className = 'modifier-select';
-        select.value = itemData.meatModifiers?.[stat] || '0';
-        
-        // Add options from -2 to +2
-        for (let i = -2; i <= 2; i++) {
-            const option = document.createElement('option');
-            option.value = i;
-            option.textContent = i > 0 ? `+${i}` : i.toString();
-            select.appendChild(option);
+    // Toggle modifiers visibility
+    toggleModifiersBtn.addEventListener('click', () => {
+        const isHidden = modifiersContainer.style.display === 'none';
+        if (isHidden) {
+            // Only create modifiers if they haven't been created yet
+            if (!statModifiers.children.length) {
+                // Add Heroic modifiers
+                HEROIC_STATS.forEach(stat => {
+                    const modifierContainer = document.createElement('div');
+                    modifierContainer.className = 'stat-modifier';
+                    
+                    const label = document.createElement('label');
+                    label.textContent = stat;
+                    
+                    const select = document.createElement('select');
+                    select.className = 'modifier-select';
+                    select.value = '0';
+                    
+                    for (let i = -2; i <= 2; i++) {
+                        const option = document.createElement('option');
+                        option.value = i;
+                        option.textContent = i > 0 ? `+${i}` : i.toString();
+                        select.appendChild(option);
+                    }
+                    
+                    select.addEventListener('change', () => {
+                        saveCurrentCharacter();
+                        updateChartsWithModifiers();
+                    });
+                    
+                    modifierContainer.appendChild(label);
+                    modifierContainer.appendChild(select);
+                    heroicModifiers.appendChild(modifierContainer);
+                });
+                
+                // Add Meat modifiers
+                MEAT_STATS.forEach(stat => {
+                    const modifierContainer = document.createElement('div');
+                    modifierContainer.className = 'stat-modifier';
+                    
+                    const label = document.createElement('label');
+                    label.textContent = stat;
+                    
+                    const select = document.createElement('select');
+                    select.className = 'modifier-select';
+                    select.value = '0';
+                    
+                    for (let i = -2; i <= 2; i++) {
+                        const option = document.createElement('option');
+                        option.value = i;
+                        option.textContent = i > 0 ? `+${i}` : i.toString();
+                        select.appendChild(option);
+                    }
+                    
+                    select.addEventListener('change', () => {
+                        saveCurrentCharacter();
+                        updateChartsWithModifiers();
+                    });
+                    
+                    modifierContainer.appendChild(label);
+                    modifierContainer.appendChild(select);
+                    meatModifiers.appendChild(modifierContainer);
+                });
+                
+                statModifiers.appendChild(heroicModifiers);
+                statModifiers.appendChild(meatModifiers);
+                modifiersContainer.appendChild(statModifiers);
+            }
         }
-        
-        select.addEventListener('change', () => {
-            saveCurrentCharacter();
-            updateChartsWithModifiers();
-        });
-        
-        modifierContainer.appendChild(label);
-        modifierContainer.appendChild(select);
-        meatModifiers.appendChild(modifierContainer);
+        modifiersContainer.style.display = isHidden ? 'block' : 'none';
+        toggleModifiersBtn.textContent = isHidden ? 'Hide Modifiers' : 'Add Modifiers';
     });
-    
-    statModifiers.appendChild(heroicModifiers);
-    statModifiers.appendChild(meatModifiers);
     
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-btn';
@@ -936,16 +1007,19 @@ function addMagicalItem(itemData = {}) {
     itemDescription.addEventListener('input', () => {
         elements.saveCharacterBtn.classList.add('unsaved-changes');
     });
+    
     deleteBtn.addEventListener('click', () => {
         itemContainer.remove();
         saveCurrentCharacter();
-        updateChartsWithModifiers();
     });
     
+    // Assemble the item
     itemContainer.appendChild(itemName);
     itemContainer.appendChild(itemDescription);
-    itemContainer.appendChild(statModifiers);
+    itemContainer.appendChild(toggleModifiersBtn);
+    itemContainer.appendChild(modifiersContainer);
     itemContainer.appendChild(deleteBtn);
+    
     elements.magicalItemsList.appendChild(itemContainer);
 }
 
@@ -954,6 +1028,7 @@ function addNote(noteData = {}) {
     const noteContainer = document.createElement('div');
     noteContainer.className = 'note';
     
+    // Create title and content fields
     const noteTitle = document.createElement('input');
     noteTitle.type = 'text';
     noteTitle.className = 'note-title';
@@ -965,80 +1040,102 @@ function addNote(noteData = {}) {
     noteContent.placeholder = 'Note Content';
     noteContent.value = noteData.content || '';
     
-    // Add stat modifiers section
+    // Create modifiers toggle button
+    const toggleModifiersBtn = document.createElement('button');
+    toggleModifiersBtn.className = 'toggle-modifiers-btn secondary-btn';
+    toggleModifiersBtn.textContent = 'Add Modifiers';
+    
+    // Create modifiers container (hidden by default)
+    const modifiersContainer = document.createElement('div');
+    modifiersContainer.className = 'modifiers-container';
+    modifiersContainer.style.display = 'none';
+    
+    // Create stat modifiers section
     const statModifiers = document.createElement('div');
     statModifiers.className = 'stat-modifiers';
     
-    // Heroic modifiers
+    // Create Heroic modifiers section
     const heroicModifiers = document.createElement('div');
     heroicModifiers.className = 'modifier-group';
     heroicModifiers.innerHTML = '<h4>Heroic Modifiers</h4>';
     
-    HEROIC_STATS.forEach(stat => {
-        const modifierContainer = document.createElement('div');
-        modifierContainer.className = 'stat-modifier';
-        
-        const label = document.createElement('label');
-        label.textContent = stat;
-        
-        const select = document.createElement('select');
-        select.className = 'modifier-select';
-        select.value = noteData.heroicModifiers?.[stat] || '0';
-        
-        // Add options from -2 to +2
-        for (let i = -2; i <= 2; i++) {
-            const option = document.createElement('option');
-            option.value = i;
-            option.textContent = i > 0 ? `+${i}` : i.toString();
-            select.appendChild(option);
-        }
-        
-        select.addEventListener('change', () => {
-            saveCurrentCharacter();
-            updateChartsWithModifiers();
-        });
-        
-        modifierContainer.appendChild(label);
-        modifierContainer.appendChild(select);
-        heroicModifiers.appendChild(modifierContainer);
-    });
-    
-    // Meat modifiers
+    // Create Meat modifiers section
     const meatModifiers = document.createElement('div');
     meatModifiers.className = 'modifier-group';
     meatModifiers.innerHTML = '<h4>Meat Modifiers</h4>';
     
-    MEAT_STATS.forEach(stat => {
-        const modifierContainer = document.createElement('div');
-        modifierContainer.className = 'stat-modifier';
-        
-        const label = document.createElement('label');
-        label.textContent = stat;
-        
-        const select = document.createElement('select');
-        select.className = 'modifier-select';
-        select.value = noteData.meatModifiers?.[stat] || '0';
-        
-        // Add options from -2 to +2
-        for (let i = -2; i <= 2; i++) {
-            const option = document.createElement('option');
-            option.value = i;
-            option.textContent = i > 0 ? `+${i}` : i.toString();
-            select.appendChild(option);
+    // Toggle modifiers visibility
+    toggleModifiersBtn.addEventListener('click', () => {
+        const isHidden = modifiersContainer.style.display === 'none';
+        if (isHidden) {
+            // Only create modifiers if they haven't been created yet
+            if (!statModifiers.children.length) {
+                // Add Heroic modifiers
+                HEROIC_STATS.forEach(stat => {
+                    const modifierContainer = document.createElement('div');
+                    modifierContainer.className = 'stat-modifier';
+                    
+                    const label = document.createElement('label');
+                    label.textContent = stat;
+                    
+                    const select = document.createElement('select');
+                    select.className = 'modifier-select';
+                    select.value = '0';
+                    
+                    for (let i = -2; i <= 2; i++) {
+                        const option = document.createElement('option');
+                        option.value = i;
+                        option.textContent = i > 0 ? `+${i}` : i.toString();
+                        select.appendChild(option);
+                    }
+                    
+                    select.addEventListener('change', () => {
+                        saveCurrentCharacter();
+                        updateChartsWithModifiers();
+                    });
+                    
+                    modifierContainer.appendChild(label);
+                    modifierContainer.appendChild(select);
+                    heroicModifiers.appendChild(modifierContainer);
+                });
+                
+                // Add Meat modifiers
+                MEAT_STATS.forEach(stat => {
+                    const modifierContainer = document.createElement('div');
+                    modifierContainer.className = 'stat-modifier';
+                    
+                    const label = document.createElement('label');
+                    label.textContent = stat;
+                    
+                    const select = document.createElement('select');
+                    select.className = 'modifier-select';
+                    select.value = '0';
+                    
+                    for (let i = -2; i <= 2; i++) {
+                        const option = document.createElement('option');
+                        option.value = i;
+                        option.textContent = i > 0 ? `+${i}` : i.toString();
+                        select.appendChild(option);
+                    }
+                    
+                    select.addEventListener('change', () => {
+                        saveCurrentCharacter();
+                        updateChartsWithModifiers();
+                    });
+                    
+                    modifierContainer.appendChild(label);
+                    modifierContainer.appendChild(select);
+                    meatModifiers.appendChild(modifierContainer);
+                });
+                
+                statModifiers.appendChild(heroicModifiers);
+                statModifiers.appendChild(meatModifiers);
+                modifiersContainer.appendChild(statModifiers);
+            }
         }
-        
-        select.addEventListener('change', () => {
-            saveCurrentCharacter();
-            updateChartsWithModifiers();
-        });
-        
-        modifierContainer.appendChild(label);
-        modifierContainer.appendChild(select);
-        meatModifiers.appendChild(modifierContainer);
+        modifiersContainer.style.display = isHidden ? 'block' : 'none';
+        toggleModifiersBtn.textContent = isHidden ? 'Hide Modifiers' : 'Add Modifiers';
     });
-    
-    statModifiers.appendChild(heroicModifiers);
-    statModifiers.appendChild(meatModifiers);
     
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-btn';
@@ -1051,16 +1148,19 @@ function addNote(noteData = {}) {
     noteContent.addEventListener('input', () => {
         elements.saveCharacterBtn.classList.add('unsaved-changes');
     });
+    
     deleteBtn.addEventListener('click', () => {
         noteContainer.remove();
         saveCurrentCharacter();
-        updateChartsWithModifiers();
     });
     
+    // Assemble the note
     noteContainer.appendChild(noteTitle);
     noteContainer.appendChild(noteContent);
-    noteContainer.appendChild(statModifiers);
+    noteContainer.appendChild(toggleModifiersBtn);
+    noteContainer.appendChild(modifiersContainer);
     noteContainer.appendChild(deleteBtn);
+    
     elements.notesList.appendChild(noteContainer);
 }
 

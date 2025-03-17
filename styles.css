@@ -303,8 +303,8 @@ select {
     .chart-container {
         display: block !important;
         width: 100% !important;
-        max-width: none !important;
-        margin: 20px 0 !important;
+        max-width: 300px !important;
+        margin: 20px auto !important;
         page-break-inside: avoid;
     }
 
@@ -679,4 +679,15 @@ select {
     .header-buttons {
         display: none;
     }
+}
+
+.chart-container {
+    background-color: var(--secondary-color);
+    padding: var(--spacing);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    margin-bottom: var(--spacing);
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto var(--spacing);
 } 
