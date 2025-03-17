@@ -278,39 +278,45 @@ select {
 
 /* Print styles */
 @media print {
-    /* Reset body styles for print */
+    /* Reset body styles */
     body {
         background: white !important;
         color: black !important;
         margin: 0 !important;
         padding: 0 !important;
+        font-size: 12pt !important;
+        line-height: 1.5 !important;
     }
 
-    /* Hide elements that shouldn't be printed */
-    .character-select-container,
-    .character-controls,
-    .add-item-buttons,
-    .delete-btn,
-    .toggle-modifiers-btn,
-    .modifiers-container,
-    .save-notification,
-    .stat-dropdowns,
-    .sort-control,
-    .custom-dropdown-wrapper,
-    #saveCharacterBtn,
-    .header-buttons,
-    .action-btn,
-    .save-btn {
-        display: none !important;
+    /* Hide all elements by default */
+    body * {
+        visibility: hidden;
     }
 
-    /* Show only the character information section */
-    .character-profile {
-        display: block !important;
+    /* Show only the PDF container and its contents */
+    .pdf-container,
+    .pdf-container * {
+        visibility: visible;
+    }
+
+    /* PDF container styling */
+    .pdf-container {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: white !important;
+        padding: 20mm !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Character profile styling */
+    .pdf-container .character-profile {
         width: 100% !important;
         max-width: none !important;
         margin: 0 !important;
-        padding: 20px !important;
+        padding: 0 !important;
         background: white !important;
         color: black !important;
         box-shadow: none !important;
@@ -318,17 +324,18 @@ select {
     }
 
     /* Basic info styling */
-    .basic-info {
+    .pdf-container .basic-info {
         margin-bottom: 20px !important;
     }
 
-    .basic-info label {
+    .pdf-container .basic-info label {
         display: block !important;
         font-weight: bold !important;
         margin-bottom: 5px !important;
     }
 
-    .basic-info input {
+    .pdf-container .basic-info input,
+    .pdf-container .basic-info span {
         display: block !important;
         width: 100% !important;
         border: none !important;
@@ -338,19 +345,21 @@ select {
     }
 
     /* Stats container styling */
-    .stats-container {
+    .pdf-container .stats-container {
         display: block !important;
         margin: 20px 0 !important;
         page-break-inside: avoid !important;
     }
 
-    .stats-section {
+    .pdf-container .stats-section {
         margin-bottom: 20px !important;
         page-break-inside: avoid !important;
+        border: 1px solid #ddd !important;
+        padding: 15px !important;
     }
 
     /* Chart container styling */
-    .chart-container {
+    .pdf-container .chart-container {
         display: block !important;
         width: 100% !important;
         max-width: 450px !important;
@@ -358,17 +367,18 @@ select {
         page-break-inside: avoid !important;
         background: white !important;
         border: 1px solid #ddd !important;
+        padding: 15px !important;
     }
 
     /* Stats breakdown styling */
-    .stats-breakdown {
+    .pdf-container .stats-breakdown {
         display: block !important;
         width: 100% !important;
         margin: 20px 0 !important;
         page-break-inside: avoid !important;
     }
 
-    .stat-item {
+    .pdf-container .stat-item {
         display: flex !important;
         justify-content: space-between !important;
         padding: 5px 0 !important;
@@ -376,16 +386,16 @@ select {
     }
 
     /* Magical items and notes styling */
-    .magical-items,
-    .notes-section {
+    .pdf-container .magical-items,
+    .pdf-container .notes-section {
         display: block !important;
         width: 100% !important;
         margin: 20px 0 !important;
         page-break-inside: avoid !important;
     }
 
-    .magical-item,
-    .note {
+    .pdf-container .magical-item,
+    .pdf-container .note {
         border: 1px solid #ddd !important;
         background: white !important;
         margin-bottom: 15px !important;
@@ -393,21 +403,21 @@ select {
         page-break-inside: avoid !important;
     }
 
-    .item-name,
-    .note-title {
+    .pdf-container .item-name,
+    .pdf-container .note-title {
         font-weight: bold !important;
         margin-bottom: 10px !important;
         display: block !important;
     }
 
-    .item-description,
-    .note-content {
+    .pdf-container .item-description,
+    .pdf-container .note-content {
         margin-bottom: 10px !important;
         display: block !important;
     }
 
     /* Overall ratings styling */
-    .overall-rating {
+    .pdf-container .overall-rating {
         text-align: center !important;
         margin: 20px 0 !important;
         padding: 10px !important;
@@ -415,7 +425,7 @@ select {
         page-break-inside: avoid !important;
     }
 
-    .rating-display {
+    .pdf-container .rating-display {
         font-size: 1.5rem !important;
         font-weight: bold !important;
         margin: 10px 0 !important;
@@ -433,13 +443,8 @@ select {
     }
 
     /* Ensure proper page breaks */
-    .character-profile > * {
+    .pdf-container .character-profile > * {
         page-break-inside: avoid !important;
-    }
-
-    /* Hide PDF container during normal print */
-    .pdf-container {
-        display: none !important;
     }
 }
 

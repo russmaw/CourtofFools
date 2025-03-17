@@ -1525,10 +1525,9 @@ function generatePDF() {
     const profileClone = elements.characterProfile.cloneNode(true);
     
     // Remove buttons and interactive elements
-    const buttonsToRemove = profileClone.querySelectorAll('button, input, textarea, select');
-    buttonsToRemove.forEach(element => {
+    const elementsToRemove = profileClone.querySelectorAll('button, input, textarea, select, .character-controls, .add-item-buttons, .delete-btn, .toggle-modifiers-btn, .modifiers-container, .save-notification, .stat-dropdowns, .sort-control, .custom-dropdown-wrapper, #saveCharacterBtn, .header-buttons, .action-btn, .save-btn');
+    elementsToRemove.forEach(element => {
         if (element) {
-            // Replace inputs and textareas with their values
             if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
                 const span = document.createElement('span');
                 span.textContent = element.value || '';
@@ -1542,37 +1541,13 @@ function generatePDF() {
     // Add the cloned profile to the container
     container.appendChild(profileClone);
     
-    // Hide all other elements
-    const allElements = document.body.children;
-    Array.from(allElements).forEach(element => {
-        if (element !== container) {
-            element.style.display = 'none';
-        }
-    });
-    
-    // Show the container
-    container.style.display = 'block';
-    container.style.position = 'absolute';
-    container.style.left = '0';
-    container.style.top = '0';
-    container.style.width = '100%';
-    container.style.height = '100%';
-    container.style.background = 'white';
-    container.style.color = 'black';
-    container.style.padding = '20mm';
-    container.style.boxSizing = 'border-box';
+    // Add the container to the body
+    document.body.appendChild(container);
     
     // Print
     window.print();
     
-    // Restore visibility of all elements
-    Array.from(allElements).forEach(element => {
-        if (element !== container) {
-            element.style.display = '';
-        }
-    });
-    
-    // Remove the container
+    // Remove the container after printing
     container.remove();
 }
 
