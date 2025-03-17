@@ -882,6 +882,22 @@ function showSaveNotification() {
     }, 2000);
 }
 
+// Get modifiers from a container
+function getModifiersFromContainer(container, type) {
+    const modifiers = {};
+    const modifierElements = container.querySelectorAll(`.stat-modifier[data-type="${type}"]`);
+    
+    modifierElements.forEach(mod => {
+        const stat = mod.getAttribute('data-stat');
+        const select = mod.querySelector('.modifier-select');
+        if (stat && select) {
+            modifiers[stat] = parseInt(select.value);
+        }
+    });
+    
+    return modifiers;
+}
+
 // Add magical item
 function addMagicalItem(itemData = {}) {
     const itemContainer = document.createElement('div');
@@ -899,102 +915,124 @@ function addMagicalItem(itemData = {}) {
     itemDescription.placeholder = 'Item Description';
     itemDescription.value = itemData.description || '';
     
-    // Create modifiers toggle button
-    const toggleModifiersBtn = document.createElement('button');
-    toggleModifiersBtn.className = 'toggle-modifiers-btn secondary-btn';
-    toggleModifiersBtn.textContent = 'Add Modifiers';
-    
-    // Create modifiers container (hidden by default)
+    // Create modifiers container
     const modifiersContainer = document.createElement('div');
     modifiersContainer.className = 'modifiers-container';
-    modifiersContainer.style.display = 'none';
     
-    // Create stat modifiers section
-    const statModifiers = document.createElement('div');
-    statModifiers.className = 'stat-modifiers';
+    // Create add modifier button
+    const addModifierBtn = document.createElement('button');
+    addModifierBtn.className = 'add-modifier-btn secondary-btn';
+    addModifierBtn.textContent = 'Add Modifier';
     
-    // Create Heroic modifiers section
-    const heroicModifiers = document.createElement('div');
-    heroicModifiers.className = 'modifier-group';
-    heroicModifiers.innerHTML = '<h4>Heroic Modifiers</h4>';
+    // Create modifier type selector
+    const modifierTypeSelect = document.createElement('select');
+    modifierTypeSelect.className = 'modifier-type-select';
+    modifierTypeSelect.innerHTML = `
+        <option value="heroic">Heroic Modifier</option>
+        <option value="meat">Meat Modifier</option>
+    `;
     
-    // Create Meat modifiers section
-    const meatModifiers = document.createElement('div');
-    meatModifiers.className = 'modifier-group';
-    meatModifiers.innerHTML = '<h4>Meat Modifiers</h4>';
+    // Create stat selector
+    const statSelect = document.createElement('select');
+    statSelect.className = 'stat-select';
     
-    // Toggle modifiers visibility
-    toggleModifiersBtn.addEventListener('click', () => {
-        const isHidden = modifiersContainer.style.display === 'none';
-        if (isHidden) {
-            // Only create modifiers if they haven't been created yet
-            if (!statModifiers.children.length) {
-                // Add Heroic modifiers
-                HEROIC_STATS.forEach(stat => {
-                    const modifierContainer = document.createElement('div');
-                    modifierContainer.className = 'stat-modifier';
-                    
-                    const label = document.createElement('label');
-                    label.textContent = stat;
-                    
-                    const select = document.createElement('select');
-                    select.className = 'modifier-select';
-                    select.value = '0';
-                    
-                    for (let i = -2; i <= 2; i++) {
-                        const option = document.createElement('option');
-                        option.value = i;
-                        option.textContent = i > 0 ? `+${i}` : i.toString();
-                        select.appendChild(option);
-                    }
-                    
-                    select.addEventListener('change', () => {
-                        saveCurrentCharacter();
-                        updateChartsWithModifiers();
-                    });
-                    
-                    modifierContainer.appendChild(label);
-                    modifierContainer.appendChild(select);
-                    heroicModifiers.appendChild(modifierContainer);
-                });
-                
-                // Add Meat modifiers
-                MEAT_STATS.forEach(stat => {
-                    const modifierContainer = document.createElement('div');
-                    modifierContainer.className = 'stat-modifier';
-                    
-                    const label = document.createElement('label');
-                    label.textContent = stat;
-                    
-                    const select = document.createElement('select');
-                    select.className = 'modifier-select';
-                    select.value = '0';
-                    
-                    for (let i = -2; i <= 2; i++) {
-                        const option = document.createElement('option');
-                        option.value = i;
-                        option.textContent = i > 0 ? `+${i}` : i.toString();
-                        select.appendChild(option);
-                    }
-                    
-                    select.addEventListener('change', () => {
-                        saveCurrentCharacter();
-                        updateChartsWithModifiers();
-                    });
-                    
-                    modifierContainer.appendChild(label);
-                    modifierContainer.appendChild(select);
-                    meatModifiers.appendChild(modifierContainer);
-                });
-                
-                statModifiers.appendChild(heroicModifiers);
-                statModifiers.appendChild(meatModifiers);
-                modifiersContainer.appendChild(statModifiers);
-            }
+    // Update stat options based on modifier type
+    function updateStatOptions() {
+        const type = modifierTypeSelect.value;
+        const stats = type === 'heroic' ? HEROIC_STATS : MEAT_STATS;
+        
+        // Clear existing options
+        statSelect.innerHTML = '';
+        
+        // Add options
+        stats.forEach(stat => {
+            const option = document.createElement('option');
+            option.value = stat;
+            option.textContent = stat;
+            statSelect.appendChild(option);
+        });
+    }
+    
+    // Initial population of stat options
+    updateStatOptions();
+    
+    // Update stat options when modifier type changes
+    modifierTypeSelect.addEventListener('change', updateStatOptions);
+    
+    // Create modifier controls container
+    const modifierControls = document.createElement('div');
+    modifierControls.className = 'modifier-controls';
+    modifierControls.appendChild(modifierTypeSelect);
+    modifierControls.appendChild(statSelect);
+    modifierControls.appendChild(addModifierBtn);
+    
+    // Function to add a new modifier
+    function addModifier() {
+        const type = modifierTypeSelect.value;
+        const stat = statSelect.value;
+        
+        // Check if modifier already exists
+        const existingModifier = modifiersContainer.querySelector(`.stat-modifier[data-type="${type}"][data-stat="${stat}"]`);
+        if (existingModifier) {
+            alert('This modifier already exists!');
+            return;
         }
-        modifiersContainer.style.display = isHidden ? 'block' : 'none';
-        toggleModifiersBtn.textContent = isHidden ? 'Hide Modifiers' : 'Add Modifiers';
-    });
+        
+        // Create modifier container
+        const modifierContainer = document.createElement('div');
+        modifierContainer.className = 'stat-modifier';
+        modifierContainer.setAttribute('data-type', type);
+        modifierContainer.setAttribute('data-stat', stat);
+        
+        // Create label
+        const label = document.createElement('label');
+        label.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} - ${stat}`;
+        
+        // Create select for modifier value
+        const select = document.createElement('select');
+        select.className = 'modifier-select';
+        
+        // Add options from -2 to +2
+        for (let i = -2; i <= 2; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i > 0 ? `+${i}` : i.toString();
+            select.appendChild(option);
+        }
+        
+        // Set initial value from itemData if it exists
+        if (itemData[`${type}Modifiers`] && itemData[`${type}Modifiers`][stat] !== undefined) {
+            select.value = itemData[`${type}Modifiers`][stat];
+        } else {
+            select.value = '0';
+        }
+        
+        // Create remove button
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-modifier-btn';
+        removeBtn.textContent = '×';
+        
+        // Add event listeners
+        select.addEventListener('change', () => {
+            saveCurrentCharacter();
+            updateChartsWithModifiers();
+        });
+        
+        removeBtn.addEventListener('click', () => {
+            modifierContainer.remove();
+            saveCurrentCharacter();
+            updateChartsWithModifiers();
+        });
+        
+        // Assemble modifier
+        modifierContainer.appendChild(label);
+        modifierContainer.appendChild(select);
+        modifierContainer.appendChild(removeBtn);
+        modifiersContainer.appendChild(modifierContainer);
+    }
+    
+    // Add click event to add modifier button
+    addModifierBtn.addEventListener('click', addModifier);
     
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-btn';
@@ -1016,11 +1054,29 @@ function addMagicalItem(itemData = {}) {
     // Assemble the item
     itemContainer.appendChild(itemName);
     itemContainer.appendChild(itemDescription);
-    itemContainer.appendChild(toggleModifiersBtn);
+    itemContainer.appendChild(modifierControls);
     itemContainer.appendChild(modifiersContainer);
     itemContainer.appendChild(deleteBtn);
     
     elements.magicalItemsList.appendChild(itemContainer);
+    
+    // Add existing modifiers if they exist
+    if (itemData.heroicModifiers) {
+        Object.entries(itemData.heroicModifiers).forEach(([stat, value]) => {
+            modifierTypeSelect.value = 'heroic';
+            updateStatOptions();
+            statSelect.value = stat;
+            addModifier();
+        });
+    }
+    if (itemData.meatModifiers) {
+        Object.entries(itemData.meatModifiers).forEach(([stat, value]) => {
+            modifierTypeSelect.value = 'meat';
+            updateStatOptions();
+            statSelect.value = stat;
+            addModifier();
+        });
+    }
 }
 
 // Add note
@@ -1040,102 +1096,124 @@ function addNote(noteData = {}) {
     noteContent.placeholder = 'Note Content';
     noteContent.value = noteData.content || '';
     
-    // Create modifiers toggle button
-    const toggleModifiersBtn = document.createElement('button');
-    toggleModifiersBtn.className = 'toggle-modifiers-btn secondary-btn';
-    toggleModifiersBtn.textContent = 'Add Modifiers';
-    
-    // Create modifiers container (hidden by default)
+    // Create modifiers container
     const modifiersContainer = document.createElement('div');
     modifiersContainer.className = 'modifiers-container';
-    modifiersContainer.style.display = 'none';
     
-    // Create stat modifiers section
-    const statModifiers = document.createElement('div');
-    statModifiers.className = 'stat-modifiers';
+    // Create add modifier button
+    const addModifierBtn = document.createElement('button');
+    addModifierBtn.className = 'add-modifier-btn secondary-btn';
+    addModifierBtn.textContent = 'Add Modifier';
     
-    // Create Heroic modifiers section
-    const heroicModifiers = document.createElement('div');
-    heroicModifiers.className = 'modifier-group';
-    heroicModifiers.innerHTML = '<h4>Heroic Modifiers</h4>';
+    // Create modifier type selector
+    const modifierTypeSelect = document.createElement('select');
+    modifierTypeSelect.className = 'modifier-type-select';
+    modifierTypeSelect.innerHTML = `
+        <option value="heroic">Heroic Modifier</option>
+        <option value="meat">Meat Modifier</option>
+    `;
     
-    // Create Meat modifiers section
-    const meatModifiers = document.createElement('div');
-    meatModifiers.className = 'modifier-group';
-    meatModifiers.innerHTML = '<h4>Meat Modifiers</h4>';
+    // Create stat selector
+    const statSelect = document.createElement('select');
+    statSelect.className = 'stat-select';
     
-    // Toggle modifiers visibility
-    toggleModifiersBtn.addEventListener('click', () => {
-        const isHidden = modifiersContainer.style.display === 'none';
-        if (isHidden) {
-            // Only create modifiers if they haven't been created yet
-            if (!statModifiers.children.length) {
-                // Add Heroic modifiers
-                HEROIC_STATS.forEach(stat => {
-                    const modifierContainer = document.createElement('div');
-                    modifierContainer.className = 'stat-modifier';
-                    
-                    const label = document.createElement('label');
-                    label.textContent = stat;
-                    
-                    const select = document.createElement('select');
-                    select.className = 'modifier-select';
-                    select.value = '0';
-                    
-                    for (let i = -2; i <= 2; i++) {
-                        const option = document.createElement('option');
-                        option.value = i;
-                        option.textContent = i > 0 ? `+${i}` : i.toString();
-                        select.appendChild(option);
-                    }
-                    
-                    select.addEventListener('change', () => {
-                        saveCurrentCharacter();
-                        updateChartsWithModifiers();
-                    });
-                    
-                    modifierContainer.appendChild(label);
-                    modifierContainer.appendChild(select);
-                    heroicModifiers.appendChild(modifierContainer);
-                });
-                
-                // Add Meat modifiers
-                MEAT_STATS.forEach(stat => {
-                    const modifierContainer = document.createElement('div');
-                    modifierContainer.className = 'stat-modifier';
-                    
-                    const label = document.createElement('label');
-                    label.textContent = stat;
-                    
-                    const select = document.createElement('select');
-                    select.className = 'modifier-select';
-                    select.value = '0';
-                    
-                    for (let i = -2; i <= 2; i++) {
-                        const option = document.createElement('option');
-                        option.value = i;
-                        option.textContent = i > 0 ? `+${i}` : i.toString();
-                        select.appendChild(option);
-                    }
-                    
-                    select.addEventListener('change', () => {
-                        saveCurrentCharacter();
-                        updateChartsWithModifiers();
-                    });
-                    
-                    modifierContainer.appendChild(label);
-                    modifierContainer.appendChild(select);
-                    meatModifiers.appendChild(modifierContainer);
-                });
-                
-                statModifiers.appendChild(heroicModifiers);
-                statModifiers.appendChild(meatModifiers);
-                modifiersContainer.appendChild(statModifiers);
-            }
+    // Update stat options based on modifier type
+    function updateStatOptions() {
+        const type = modifierTypeSelect.value;
+        const stats = type === 'heroic' ? HEROIC_STATS : MEAT_STATS;
+        
+        // Clear existing options
+        statSelect.innerHTML = '';
+        
+        // Add options
+        stats.forEach(stat => {
+            const option = document.createElement('option');
+            option.value = stat;
+            option.textContent = stat;
+            statSelect.appendChild(option);
+        });
+    }
+    
+    // Initial population of stat options
+    updateStatOptions();
+    
+    // Update stat options when modifier type changes
+    modifierTypeSelect.addEventListener('change', updateStatOptions);
+    
+    // Create modifier controls container
+    const modifierControls = document.createElement('div');
+    modifierControls.className = 'modifier-controls';
+    modifierControls.appendChild(modifierTypeSelect);
+    modifierControls.appendChild(statSelect);
+    modifierControls.appendChild(addModifierBtn);
+    
+    // Function to add a new modifier
+    function addModifier() {
+        const type = modifierTypeSelect.value;
+        const stat = statSelect.value;
+        
+        // Check if modifier already exists
+        const existingModifier = modifiersContainer.querySelector(`.stat-modifier[data-type="${type}"][data-stat="${stat}"]`);
+        if (existingModifier) {
+            alert('This modifier already exists!');
+            return;
         }
-        modifiersContainer.style.display = isHidden ? 'block' : 'none';
-        toggleModifiersBtn.textContent = isHidden ? 'Hide Modifiers' : 'Add Modifiers';
-    });
+        
+        // Create modifier container
+        const modifierContainer = document.createElement('div');
+        modifierContainer.className = 'stat-modifier';
+        modifierContainer.setAttribute('data-type', type);
+        modifierContainer.setAttribute('data-stat', stat);
+        
+        // Create label
+        const label = document.createElement('label');
+        label.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} - ${stat}`;
+        
+        // Create select for modifier value
+        const select = document.createElement('select');
+        select.className = 'modifier-select';
+        
+        // Add options from -2 to +2
+        for (let i = -2; i <= 2; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i > 0 ? `+${i}` : i.toString();
+            select.appendChild(option);
+        }
+        
+        // Set initial value from itemData if it exists
+        if (itemData[`${type}Modifiers`] && itemData[`${type}Modifiers`][stat] !== undefined) {
+            select.value = itemData[`${type}Modifiers`][stat];
+        } else {
+            select.value = '0';
+        }
+        
+        // Create remove button
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-modifier-btn';
+        removeBtn.textContent = '×';
+        
+        // Add event listeners
+        select.addEventListener('change', () => {
+            saveCurrentCharacter();
+            updateChartsWithModifiers();
+        });
+        
+        removeBtn.addEventListener('click', () => {
+            modifierContainer.remove();
+            saveCurrentCharacter();
+            updateChartsWithModifiers();
+        });
+        
+        // Assemble modifier
+        modifierContainer.appendChild(label);
+        modifierContainer.appendChild(select);
+        modifierContainer.appendChild(removeBtn);
+        modifiersContainer.appendChild(modifierContainer);
+    }
+    
+    // Add click event to add modifier button
+    addModifierBtn.addEventListener('click', addModifier);
     
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-btn';
@@ -1157,7 +1235,7 @@ function addNote(noteData = {}) {
     // Assemble the note
     noteContainer.appendChild(noteTitle);
     noteContainer.appendChild(noteContent);
-    noteContainer.appendChild(toggleModifiersBtn);
+    noteContainer.appendChild(modifierControls);
     noteContainer.appendChild(modifiersContainer);
     noteContainer.appendChild(deleteBtn);
     
@@ -1254,20 +1332,6 @@ function saveCurrentCharacter() {
     // Remove unsaved changes indicator
     elements.saveCharacterBtn.classList.remove('unsaved-changes');
     console.log('Character saved successfully');
-}
-
-// Get modifiers from a container
-function getModifiersFromContainer(container, type) {
-    const modifiers = {};
-    const modifierGroup = container.querySelector(`.modifier-group h4:contains('${type}')`)?.parentElement;
-    if (modifierGroup) {
-        modifierGroup.querySelectorAll('.stat-modifier').forEach(mod => {
-            const label = mod.querySelector('label');
-            const select = mod.querySelector('select');
-            modifiers[label.textContent] = parseInt(select.value);
-        });
-    }
-    return modifiers;
 }
 
 // Update charts with modifiers
