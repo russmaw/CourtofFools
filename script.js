@@ -536,27 +536,81 @@ function createCustomDropdown() {
     const wrapper = document.createElement('div');
     wrapper.className = 'custom-dropdown-wrapper';
     
+    // Create sort control
+    const sortControl = document.createElement('div');
+    sortControl.className = 'sort-control';
+    
+    const sortLabel = document.createElement('label');
+    sortLabel.textContent = 'Sort by:';
+    
+    const sortSelect = document.createElement('select');
+    sortSelect.className = 'sort-select';
+    sortSelect.innerHTML = `
+        <option value="name">Name</option>
+        <option value="profession">Profession</option>
+        <option value="advancedProfession">Advanced Profession</option>
+    `;
+    
+    sortControl.appendChild(sortLabel);
+    sortControl.appendChild(sortSelect);
+    wrapper.appendChild(sortControl);
+    
     // Create the main select element
     const select = document.createElement('select');
     select.id = 'characterSelect';
     select.className = 'character-selector';
     select.innerHTML = '<option value="">Select a Character</option>';
     
-    // Add options with more detailed information
-    characters.forEach(char => {
-        const option = document.createElement('option');
-        option.value = char.id;
-        
-        // Create a formatted display string
-        let displayText = char.name || 'Unnamed Character';
-        if (char.profession || char.advancedProfession) {
-            displayText += ' - ';
-            if (char.profession) displayText += char.profession;
-            if (char.advancedProfession) displayText += ` (${char.advancedProfession})`;
+    // Function to update dropdown options
+    function updateDropdownOptions(sortBy = 'name') {
+        // Clear existing options except the first one
+        while (select.options.length > 1) {
+            select.remove(1);
         }
         
-        option.textContent = displayText;
-        select.appendChild(option);
+        // Create a copy of characters array for sorting
+        const sortedCharacters = [...characters].sort((a, b) => {
+            switch (sortBy) {
+                case 'name':
+                    return (a.name || 'Unnamed Character').localeCompare(b.name || 'Unnamed Character');
+                case 'profession':
+                    return (a.profession || '').localeCompare(b.profession || '');
+                case 'advancedProfession':
+                    return (a.advancedProfession || '').localeCompare(b.advancedProfession || '');
+                default:
+                    return 0;
+            }
+        });
+        
+        // Add sorted options
+        sortedCharacters.forEach(char => {
+            const option = document.createElement('option');
+            option.value = char.id;
+            
+            // Create a formatted display string
+            let displayText = char.name || 'Unnamed Character';
+            if (char.profession || char.advancedProfession) {
+                displayText += ' - ';
+                if (char.profession) displayText += char.profession;
+                if (char.advancedProfession) displayText += ` (${char.advancedProfession})`;
+            }
+            
+            option.textContent = displayText;
+            select.appendChild(option);
+        });
+        
+        // Restore current selection if exists
+        if (currentCharacter) {
+            select.value = currentCharacter.id;
+        }
+    }
+    
+    // Initial population of options
+    updateDropdownOptions();
+    
+    // Add change event listener to sort select
+    sortSelect.addEventListener('change', (e) => {
+        updateDropdownOptions(e.target.value);
     });
     
     wrapper.appendChild(select);
@@ -923,7 +977,7 @@ function saveCurrentCharacter() {
     saveCharacters();
     
     // Update the dropdown to reflect the new name
-    updateCharacterSelect();
+    createCustomDropdown();
     
     // Remove unsaved changes indicator
     saveCharacterBtn.classList.remove('unsaved-changes');

@@ -71,6 +71,26 @@ h1 {
 
 .character-selector {
     margin-bottom: var(--spacing);
+    width: 100%;
+    padding: 8px;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-color);
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+}
+
+.character-selector:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.2);
 }
 
 select {
@@ -483,4 +503,99 @@ select {
     .stat-rating-select {
         font-size: 0.8rem;
     }
+}
+
+/* Custom Dropdown Styles */
+.custom-dropdown-wrapper {
+    position: relative;
+    display: inline-block;
+    min-width: 200px;
+}
+
+.custom-options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.custom-options.show {
+    display: block;
+}
+
+.custom-option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.custom-option:hover {
+    background-color: var(--accent-color);
+}
+
+.custom-option span:first-child {
+    flex: 1;
+    margin-right: 8px;
+}
+
+.delete-option {
+    color: var(--error-color);
+    font-size: 1.2em;
+    padding: 0 4px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.delete-option:hover {
+    opacity: 1;
+}
+
+.sort-control {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sort-control label {
+    font-size: 0.9em;
+    color: var(--text-color);
+}
+
+.sort-select {
+    padding: 4px 8px;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    background-color: var(--card-background);
+    color: var(--text-color);
+    font-size: 0.9em;
+    cursor: pointer;
+}
+
+.sort-select:hover {
+    border-color: var(--accent-color);
+}
+
+.sort-select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px var(--accent-color-transparent);
+}
+
+.custom-dropdown-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 } 
