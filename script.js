@@ -73,35 +73,6 @@ let meatStatsChart;
 let characters = JSON.parse(localStorage.getItem('characters')) || [];
 let currentCharacter = null;
 
-// DOM Elements
-const addCharacterBtn = document.getElementById('addCharacterBtn');
-const characterSelect = document.getElementById('characterSelect');
-const deleteCharacterBtn = document.getElementById('deleteCharacterBtn');
-const saveCharacterBtn = document.getElementById('saveCharacterBtn');
-const characterProfile = document.getElementById('characterProfile');
-const characterName = document.getElementById('characterName');
-const profession = document.getElementById('profession');
-const advancedProfession = document.getElementById('advancedProfession');
-const magicalItemsList = document.getElementById('magicalItemsList');
-const notesList = document.getElementById('notesList');
-const addMagicalItemBtn = document.getElementById('addMagicalItemBtn');
-const addNoteBtn = document.getElementById('addNoteBtn');
-
-// Debug logging for DOM elements
-console.log('DOM Elements:', {
-    addCharacterBtn,
-    characterSelect,
-    deleteCharacterBtn,
-    saveCharacterBtn,
-    characterName,
-    profession,
-    advancedProfession,
-    magicalItemsList,
-    notesList,
-    addMagicalItemBtn,
-    addNoteBtn
-});
-
 // Initialize the application
 function init() {
     console.log('Initializing application...');
@@ -112,11 +83,40 @@ function init() {
         return;
     }
     
+    // Get DOM Elements
+    const addCharacterBtn = document.getElementById('addCharacterBtn');
+    const characterSelect = document.getElementById('characterSelect');
+    const deleteCharacterBtn = document.getElementById('deleteCharacterBtn');
+    const saveCharacterBtn = document.getElementById('saveCharacterBtn');
+    const characterProfile = document.getElementById('characterProfile');
+    const characterName = document.getElementById('characterName');
+    const profession = document.getElementById('profession');
+    const advancedProfession = document.getElementById('advancedProfession');
+    const magicalItemsList = document.getElementById('magicalItemsList');
+    const notesList = document.getElementById('notesList');
+    const addMagicalItemBtn = document.getElementById('addMagicalItemBtn');
+    const addNoteBtn = document.getElementById('addNoteBtn');
+
+    // Debug logging for DOM elements
+    console.log('DOM Elements:', {
+        addCharacterBtn,
+        characterSelect,
+        deleteCharacterBtn,
+        saveCharacterBtn,
+        characterName,
+        profession,
+        advancedProfession,
+        magicalItemsList,
+        notesList,
+        addMagicalItemBtn,
+        addNoteBtn
+    });
+    
     // Initialize charts first
     initializeCharts();
     
-    // Then update character select
-    updateCharacterSelect();
+    // Then create custom dropdown
+    createCustomDropdown();
     
     // Finally setup event listeners
     setupEventListeners();
@@ -128,14 +128,6 @@ function init() {
 function setupEventListeners() {
     console.log('Setting up event listeners...');
     
-    // Remove any existing event listeners
-    addCharacterBtn.replaceWith(addCharacterBtn.cloneNode(true));
-    characterSelect.replaceWith(characterSelect.cloneNode(true));
-    deleteCharacterBtn.replaceWith(deleteCharacterBtn.cloneNode(true));
-    saveCharacterBtn.replaceWith(saveCharacterBtn.cloneNode(true));
-    addMagicalItemBtn.replaceWith(addMagicalItemBtn.cloneNode(true));
-    addNoteBtn.replaceWith(addNoteBtn.cloneNode(true));
-    
     // Get fresh references to the elements
     const addCharacterBtn = document.getElementById('addCharacterBtn');
     const characterSelect = document.getElementById('characterSelect');
@@ -143,6 +135,9 @@ function setupEventListeners() {
     const saveCharacterBtn = document.getElementById('saveCharacterBtn');
     const addMagicalItemBtn = document.getElementById('addMagicalItemBtn');
     const addNoteBtn = document.getElementById('addNoteBtn');
+    const characterName = document.getElementById('characterName');
+    const profession = document.getElementById('profession');
+    const advancedProfession = document.getElementById('advancedProfession');
     
     // Add event listeners
     addCharacterBtn.addEventListener('click', () => {
@@ -305,16 +300,43 @@ function initializeCharts() {
 
 // Update chart data
 function updateChart(chart, stats, categories, modifiers = {}) {
-    if (!chart || !stats || !categories) return;
+    console.log('Updating chart with:', {
+        chart: chart ? 'valid' : 'null',
+        stats,
+        categories,
+        modifiers
+    });
     
-    chart.data.datasets[0].data = categories.map(category => {
+    if (!chart || !stats || !categories) {
+        console.error('Invalid parameters for chart update:', {
+            chart: chart ? 'valid' : 'null',
+            stats: stats ? 'valid' : 'null',
+            categories: categories ? 'valid' : 'null'
+        });
+        return;
+    }
+    
+    const newData = categories.map(category => {
         const baseValue = RATING_SYSTEM[stats[category]]?.value || 1;
         const modifier = modifiers[category] || 0;
         const modifiedValue = Math.max(1, Math.min(9, baseValue + modifier));
+        console.log(`Category ${category}:`, {
+            baseValue,
+            modifier,
+            modifiedValue
+        });
         return modifiedValue;
     });
     
-    chart.update('none'); // Use 'none' mode for better performance
+    console.log('New chart data:', newData);
+    chart.data.datasets[0].data = newData;
+    
+    try {
+        chart.update('none');
+        console.log('Chart updated successfully');
+    } catch (error) {
+        console.error('Error updating chart:', error);
+    }
 }
 
 // Add dropdown menus for stats
@@ -351,15 +373,26 @@ function addStatDropdowns(chartId, stats, type) {
         
         // Add change event listener
         select.addEventListener('change', () => {
+            console.log(`Stat ${stat} changed to value:`, select.value);
             const rating = Object.keys(RATING_SYSTEM).find(key => 
                 RATING_SYSTEM[key].value === parseInt(select.value)
             );
+            console.log('Mapped rating:', rating);
+            
+            if (!currentCharacter) {
+                console.log('No current character selected');
+                return;
+            }
             
             if (type === 'heroic') {
+                console.log('Updating heroic stats:', currentCharacter.heroicStats);
                 currentCharacter.heroicStats[stat] = rating;
+                console.log('New heroic stats:', currentCharacter.heroicStats);
                 updateChart(heroicStatsChart, currentCharacter.heroicStats, HEROIC_STATS);
             } else {
+                console.log('Updating meat stats:', currentCharacter.meatStats);
                 currentCharacter.meatStats[stat] = rating;
+                console.log('New meat stats:', currentCharacter.meatStats);
                 updateChart(meatStatsChart, currentCharacter.meatStats, MEAT_STATS);
             }
             
@@ -472,6 +505,84 @@ function updateCharacterSelect() {
     if (currentCharacter) {
         characterSelect.value = currentCharacter.id;
     }
+}
+
+// Create a custom dropdown with delete buttons
+function createCustomDropdown() {
+    // Create wrapper for custom dropdown
+    const wrapper = document.createElement('div');
+    wrapper.className = 'custom-dropdown-wrapper';
+    
+    // Create the main select element
+    const select = document.createElement('select');
+    select.id = 'characterSelect';
+    select.className = 'character-selector';
+    select.innerHTML = '<option value="">Select a Character</option>';
+    
+    // Create the custom options container
+    const optionsContainer = document.createElement('div');
+    optionsContainer.className = 'custom-options';
+    
+    // Add options with delete buttons
+    characters.forEach(char => {
+        const optionWrapper = document.createElement('div');
+        optionWrapper.className = 'custom-option';
+        
+        const optionText = document.createElement('span');
+        optionText.textContent = char.name || 'Unnamed Character';
+        optionText.onclick = () => {
+            select.value = char.id;
+            // Create and dispatch a change event
+            const event = new Event('change', { bubbles: true });
+            select.dispatchEvent(event);
+            optionsContainer.classList.remove('show');
+        };
+        
+        const deleteBtn = document.createElement('span');
+        deleteBtn.className = 'delete-option';
+        deleteBtn.innerHTML = '×';
+        deleteBtn.onclick = (e) => {
+            e.stopPropagation();
+            if (confirm('Are you sure you want to delete this character?')) {
+                characters = characters.filter(c => c.id !== char.id);
+                saveCharacters();
+                if (currentCharacter && currentCharacter.id === char.id) {
+                    currentCharacter = null;
+                    loadCharacter(null);
+                }
+                createCustomDropdown();
+            }
+        };
+        
+        optionWrapper.appendChild(optionText);
+        optionWrapper.appendChild(deleteBtn);
+        optionsContainer.appendChild(optionWrapper);
+    });
+    
+    // Add click handler to show/hide options
+    select.onclick = () => {
+        optionsContainer.classList.toggle('show');
+    };
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!wrapper.contains(e.target)) {
+            optionsContainer.classList.remove('show');
+        }
+    });
+    
+    wrapper.appendChild(select);
+    wrapper.appendChild(optionsContainer);
+    
+    // Replace the old select with the new wrapper
+    const oldSelect = document.getElementById('characterSelect');
+    oldSelect.parentNode.replaceChild(wrapper, oldSelect);
+    
+    // Add change event listener to the new select
+    select.addEventListener('change', (e) => {
+        console.log('Character select changed:', e.target.value);
+        loadCharacter(e.target.value);
+    });
 }
 
 // Load character data
@@ -870,20 +981,64 @@ function saveCharacters() {
 
 // Calculate and update overall ratings
 function updateOverallRatings(character) {
+    if (!character) {
+        document.getElementById('heroicRating').textContent = '';
+        document.getElementById('meatRating').textContent = '';
+        return;
+    }
+
+    // Calculate averages for both stat types
     const heroicAverage = calculateAverageRating(character.heroicStats);
     const meatAverage = calculateAverageRating(character.meatStats);
 
-    document.getElementById('heroicRating').textContent = `Heroic Rating: ${heroicAverage}`;
-    document.getElementById('meatRating').textContent = `Meat Rating: ${meatAverage}`;
+    // Update the display elements
+    const heroicRatingElement = document.getElementById('heroicRating');
+    const meatRatingElement = document.getElementById('meatRating');
+
+    if (heroicRatingElement) {
+        heroicRatingElement.textContent = `Heroic Rating: ${heroicAverage}`;
+        heroicRatingElement.style.color = getRatingColor(heroicAverage);
+    }
+
+    if (meatRatingElement) {
+        meatRatingElement.textContent = `Meat Rating: ${meatAverage}`;
+        meatRatingElement.style.color = getRatingColor(meatAverage);
+    }
 }
 
 // Calculate average rating
 function calculateAverageRating(stats) {
-    const values = Object.values(stats).map(rating => RATING_SYSTEM[rating].value);
+    if (!stats || Object.keys(stats).length === 0) return 'F';
+    
+    const values = Object.values(stats)
+        .map(rating => RATING_SYSTEM[rating]?.value || 1)
+        .filter(value => !isNaN(value));
+    
+    if (values.length === 0) return 'F';
+    
     const average = values.reduce((a, b) => a + b, 0) / values.length;
+    const roundedAverage = Math.round(average);
+    
+    // Find the closest rating
     return Object.keys(RATING_SYSTEM).find(key => 
-        RATING_SYSTEM[key].value === Math.round(average)
-    );
+        RATING_SYSTEM[key].value === roundedAverage
+    ) || 'F';
+}
+
+// Get color for rating
+function getRatingColor(rating) {
+    const ratingColors = {
+        'F': '#ff0000',
+        'E': '#ff4000',
+        'D': '#ff8000',
+        'C': '#ffff00',
+        'B': '#80ff00',
+        'A': '#00ff00',
+        'S': '#00ffff',
+        'SS': '#0000ff',
+        'SSS': '#8000ff'
+    };
+    return ratingColors[rating] || '#ffffff';
 }
 
 // Delete current character
@@ -931,3 +1086,4 @@ function deleteCurrentCharacter() {
         console.log('Character deleted successfully');
     }
 } 
+document.addEventListener('DOMContentLoaded', init); 
