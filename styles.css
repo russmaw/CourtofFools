@@ -293,41 +293,46 @@ select {
         display: none;
     }
 
-    /* Move overall rating to the top */
+    /* Move overall rating under basic info */
     .overall-rating {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 200px;
-        margin: 0;
-        padding: 1rem;
+        position: relative;
+        width: 100%;
+        margin: 2rem 0;
+        padding: 2rem;
         background-color: white;
-        border: 1px solid #000;
+        border: 2px solid #000;
         border-radius: 0;
         page-break-inside: avoid;
+        text-align: center;
     }
 
     .overall-rating h2 {
-        margin-bottom: 0.5rem;
-        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        font-size: 2rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
     }
 
     .rating-display {
-        font-size: 1.2rem;
-        margin: 0.25rem 0;
+        font-size: 2.5rem;
+        margin: 1rem 0;
+        font-weight: bold;
     }
 
-    /* Adjust profile header to accommodate overall rating */
+    /* Adjust profile header */
     .profile-header {
-        margin-right: 220px;
-        margin-bottom: 1rem;
+        margin-bottom: 0;
         border-bottom: 1px solid #000;
         padding-bottom: 1rem;
     }
 
+    .basic-info {
+        margin-bottom: 1rem;
+    }
+
     .stats-container {
         page-break-inside: avoid;
-        margin-top: 1rem;
+        margin-top: 2rem;
     }
 
     .magical-items, .notes-section {
