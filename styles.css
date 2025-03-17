@@ -273,167 +273,101 @@ select {
 
 /* Print styles */
 @media print {
-    /* Hide non-printable elements */
-    .no-print {
+    /* Hide elements that shouldn't be printed */
+    .character-select-container,
+    .character-controls,
+    .add-item-buttons,
+    .delete-btn,
+    .toggle-modifiers-btn,
+    .modifiers-container,
+    .save-notification,
+    .stat-dropdowns,
+    .sort-control,
+    .custom-dropdown-wrapper {
         display: none !important;
     }
 
-    /* Reset page margins and background */
-    @page {
-        margin: 1cm;
-        size: A4;
+    /* Show only the character information section */
+    .character-information {
+        display: block !important;
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 20px !important;
+        background: white !important;
+        color: black !important;
+        box-shadow: none !important;
     }
 
-    body {
-        background: white;
-        color: black;
-        font-size: 12pt;
-        line-height: 1.5;
-        margin: 0;
-        padding: 0;
-    }
-
-    /* Title section */
-    .title-section {
-        text-align: center;
-        margin-bottom: 2rem;
-        page-break-after: avoid;
-    }
-
-    .title-section h1 {
-        font-size: 24pt;
-        margin: 0;
-        color: #c41e3a;
-    }
-
-    /* Character info section */
-    .character-info {
-        margin-bottom: 2rem;
-        page-break-after: avoid;
-    }
-
-    .character-info h2 {
-        font-size: 18pt;
-        margin: 0 0 1rem 0;
-        color: #c41e3a;
-    }
-
-    .character-info p {
-        margin: 0.5rem 0;
-    }
-
-    /* Overall rating section */
-    .overall-rating {
-        margin-bottom: 2rem;
-        page-break-after: avoid;
-    }
-
-    .overall-rating h2 {
-        font-size: 18pt;
-        margin: 0 0 1rem 0;
-        color: #c41e3a;
-    }
-
-    .overall-rating p {
-        margin: 0.5rem 0;
-        font-size: 14pt;
-    }
-
-    /* Charts section */
-    .charts-section {
-        margin-bottom: 2rem;
-        page-break-after: avoid;
-    }
-
-    .charts-section h2 {
-        font-size: 18pt;
-        margin: 0 0 1rem 0;
-        color: #c41e3a;
-    }
-
+    /* Ensure charts are visible and properly sized */
     .chart-container {
-        margin-bottom: 2rem;
+        display: block !important;
+        width: 100% !important;
+        max-width: none !important;
+        margin: 20px 0 !important;
         page-break-inside: avoid;
     }
 
-    .chart-container canvas {
-        max-width: 100%;
-        height: auto !important;
-    }
-
-    /* Stats breakdown section */
+    /* Ensure stats breakdown is visible */
     .stats-breakdown {
-        margin-bottom: 2rem;
-        page-break-after: avoid;
-    }
-
-    .stats-breakdown h2 {
-        font-size: 18pt;
-        margin: 0 0 1rem 0;
-        color: #c41e3a;
-    }
-
-    .stats-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-        margin-bottom: 2rem;
-    }
-
-    .stats-column h3 {
-        font-size: 16pt;
-        margin: 0 0 1rem 0;
-        color: #c41e3a;
-    }
-
-    .stat-item {
-        margin: 0.5rem 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .stat-item span {
-        font-weight: bold;
-    }
-
-    /* Magical items and notes section */
-    .items-notes-section {
-        margin-bottom: 2rem;
-    }
-
-    .items-notes-section h2 {
-        font-size: 18pt;
-        margin: 0 0 1rem 0;
-        color: #c41e3a;
-    }
-
-    .magical-item, .note {
-        margin-bottom: 1.5rem;
+        display: block !important;
+        width: 100% !important;
+        max-width: none !important;
+        margin: 20px 0 !important;
         page-break-inside: avoid;
-        border: 1px solid #ddd;
-        padding: 1rem;
-        border-radius: 4px;
     }
 
-    .magical-item h3, .note h3 {
-        font-size: 14pt;
-        margin: 0 0 0.5rem 0;
-        color: #c41e3a;
+    /* Ensure magical items and notes are visible */
+    .magical-items,
+    .notes {
+        display: block !important;
+        width: 100% !important;
+        max-width: none !important;
+        margin: 20px 0 !important;
+        page-break-inside: avoid;
     }
 
-    .magical-item p, .note p {
-        margin: 0.5rem 0;
+    /* Style inputs and textareas for print */
+    input[type="text"],
+    textarea {
+        border: none !important;
+        background: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        font-size: inherit !important;
+        color: black !important;
     }
 
-    /* Hide modifier sections in print */
-    .stat-modifiers {
-        display: none;
+    /* Remove background colors and adjust borders */
+    .magical-item,
+    .note {
+        border: 1px solid #ddd !important;
+        background: white !important;
+        margin-bottom: 15px !important;
+        padding: 10px !important;
+        page-break-inside: avoid;
     }
 
-    /* Hide delete buttons in print */
-    .delete-btn {
-        display: none;
+    /* Ensure proper spacing between sections */
+    .section {
+        margin-bottom: 20px !important;
+        page-break-inside: avoid;
+    }
+
+    /* Remove any hover effects */
+    *:hover {
+        background: none !important;
+    }
+
+    /* Ensure proper page breaks */
+    .character-information > * {
+        page-break-inside: avoid;
+    }
+
+    /* Remove any animations or transitions */
+    * {
+        animation: none !important;
+        transition: none !important;
     }
 }
 
