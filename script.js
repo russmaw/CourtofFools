@@ -220,6 +220,20 @@ function initializeCharts() {
     addStatDropdowns('meatStatsChart', MEAT_STATS, 'meat');
 }
 
+// Update chart data
+function updateChart(chart, stats, categories, modifiers = {}) {
+    if (!chart || !stats || !categories) return;
+    
+    chart.data.datasets[0].data = categories.map(category => {
+        const baseValue = RATING_SYSTEM[stats[category]]?.value || 1;
+        const modifier = modifiers[category] || 0;
+        const modifiedValue = Math.max(1, Math.min(9, baseValue + modifier));
+        return modifiedValue;
+    });
+    
+    chart.update('none'); // Use 'none' mode for better performance
+}
+
 // Add dropdown menus for stats
 function addStatDropdowns(chartId, stats, type) {
     const chartContainer = document.getElementById(chartId).parentElement;
@@ -266,7 +280,6 @@ function addStatDropdowns(chartId, stats, type) {
                 updateChart(meatStatsChart, currentCharacter.meatStats, MEAT_STATS);
             }
             
-            saveCurrentCharacter();
             updateOverallRatings(currentCharacter);
             saveCharacterBtn.classList.add('unsaved-changes');
         });
@@ -371,17 +384,24 @@ function updateCharacterSelect() {
         option.textContent = char.name || 'Unnamed Character';
         characterSelect.appendChild(option);
     });
+    
+    // If there's a current character, make sure it's selected
+    if (currentCharacter) {
+        characterSelect.value = currentCharacter.id;
+    }
 }
 
 // Load character data
 function loadCharacter(characterId) {
+    if (!characterId) return;
+    
     currentCharacter = characters.find(char => char.id === (typeof characterId === 'string' ? parseInt(characterId) : characterId));
     if (!currentCharacter) return;
 
-    characterSelect.value = currentCharacter.id;
-    characterName.value = currentCharacter.name;
-    profession.value = currentCharacter.profession;
-    advancedProfession.value = currentCharacter.advancedProfession;
+    // Update form fields
+    characterName.value = currentCharacter.name || '';
+    profession.value = currentCharacter.profession || '';
+    advancedProfession.value = currentCharacter.advancedProfession || '';
 
     // Update charts
     updateChart(heroicStatsChart, currentCharacter.heroicStats, HEROIC_STATS);
@@ -401,12 +421,9 @@ function loadCharacter(characterId) {
 
     // Update overall ratings
     updateOverallRatings(currentCharacter);
-}
-
-// Update chart data
-function updateChart(chart, stats, categories) {
-    chart.data.datasets[0].data = categories.map(category => RATING_SYSTEM[stats[category]].value);
-    chart.update();
+    
+    // Remove unsaved changes indicator
+    saveCharacterBtn.classList.remove('unsaved-changes');
 }
 
 // Show save notification
@@ -656,6 +673,7 @@ function addNote(noteData = {}) {
 function saveCurrentCharacter() {
     if (!currentCharacter) return;
 
+    // Update character data
     currentCharacter.name = characterName.value;
     currentCharacter.profession = profession.value;
     currentCharacter.advancedProfession = advancedProfession.value;
@@ -682,7 +700,10 @@ function saveCurrentCharacter() {
         characters[index] = currentCharacter;
     }
 
+    // Save to localStorage
     saveCharacters();
+    
+    // Update the dropdown to reflect the new name
     updateCharacterSelect();
     
     // Remove unsaved changes indicator
@@ -750,17 +771,6 @@ function updateChartsWithModifiers() {
     // Update charts with modified values
     updateChart(heroicStatsChart, currentCharacter.heroicStats, HEROIC_STATS, heroicModifiers);
     updateChart(meatStatsChart, currentCharacter.meatStats, MEAT_STATS, meatModifiers);
-}
-
-// Update chart data with modifiers
-function updateChart(chart, stats, categories, modifiers) {
-    chart.data.datasets[0].data = categories.map(category => {
-        const baseValue = RATING_SYSTEM[stats[category]].value;
-        const modifier = modifiers[category] || 0;
-        const modifiedValue = Math.max(1, Math.min(9, baseValue + modifier));
-        return modifiedValue;
-    });
-    chart.update();
 }
 
 // Save all characters to localStorage
