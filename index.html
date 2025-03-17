@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
     <title>Mythic Adventures Bingo Book</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
@@ -29,9 +29,14 @@
             <div class="character-info">
                 <h2>Character Information</h2>
                 <div class="basic-info">
-                    <input type="text" id="characterName" placeholder="Character Name">
-                    <input type="text" id="profession" placeholder="Profession">
-                    <input type="text" id="advancedProfession" placeholder="Advanced Profession">
+                    <label for="characterName">Character Name</label>
+                    <input type="text" id="characterName" name="characterName" placeholder="Character Name">
+                    
+                    <label for="profession">Profession</label>
+                    <input type="text" id="profession" name="profession" placeholder="Profession">
+                    
+                    <label for="advancedProfession">Advanced Profession</label>
+                    <input type="text" id="advancedProfession" name="advancedProfession" placeholder="Advanced Profession">
                 </div>
             </div>
 
