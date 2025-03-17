@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline';">
     <title>Mythic Adventures Bingo Book</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 </head>
 <body>
     <div class="container">
@@ -14,9 +15,14 @@
         </div>
 
         <div class="character-select-container">
-            <button id="addCharacterBtn" class="action-btn">Add New Character</button>
-            <button id="printBtn" class="action-btn">Print Character</button>
-            <button id="deleteCharacterBtn" class="action-btn delete-btn">Delete Character</button>
+            <div class="character-controls">
+                <select id="characterSelect" class="character-selector">
+                    <option value="">Select a Character</option>
+                </select>
+                <button id="addCharacterBtn" class="action-btn">Add New Character</button>
+                <button id="printBtn" class="action-btn">Print Character</button>
+                <button id="deleteCharacterBtn" class="action-btn delete-btn">Delete Character</button>
+            </div>
         </div>
 
         <div class="character-profile" id="characterProfile">

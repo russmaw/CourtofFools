@@ -125,100 +125,88 @@ function init() {
         return;
     }
     
-    // Clean up all existing characters
-    characters = characters.map(cleanupCharacterData);
-    saveCharacters();
-    
-    // Get fresh references to all DOM elements
+    // Get DOM elements first
     getDOMElements();
     
-    // Setup event listeners first
+    // Set up event listeners
     setupEventListeners();
     
-    // Then initialize charts
-    initializeCharts();
+    // Initialize charts
+    initCharts();
     
-    // Finally create custom dropdown
+    // Create custom dropdown
     createCustomDropdown();
     
-    console.log('Application initialized');
+    // Load saved characters
+    loadSavedCharacters();
+    
+    // Set up auto-save
+    setupAutoSave();
 }
 
 // Setup event listeners
 function setupEventListeners() {
     console.log('Setting up event listeners...');
     
-    // Get fresh references to all elements
-    getDOMElements();
+    // Only add event listeners if elements exist
+    if (elements.characterSelect) {
+        elements.characterSelect.addEventListener('change', handleCharacterSelect);
+    }
     
-    // Add event listeners
-    elements.addCharacterBtn.addEventListener('click', () => {
-        console.log('Add character button clicked');
-        createNewCharacter();
-    });
+    if (elements.addCharacterBtn) {
+        elements.addCharacterBtn.addEventListener('click', createNewCharacter);
+    }
     
-    elements.printBtn.addEventListener('click', () => {
-        console.log('Print button clicked');
-        if (!currentCharacter) {
-            alert('Please select a character to print');
-            return;
-        }
-        window.print();
-    });
+    if (elements.printBtn) {
+        elements.printBtn.addEventListener('click', () => {
+            if (!currentCharacter) {
+                alert('Please select a character to print');
+                return;
+            }
+            window.print();
+        });
+    }
     
-    elements.characterSelect.addEventListener('change', (e) => {
-        console.log('Character select changed:', e.target.value);
-        loadCharacter(e.target.value);
-    });
+    if (elements.deleteCharacterBtn) {
+        elements.deleteCharacterBtn.addEventListener('click', deleteCurrentCharacter);
+    }
     
-    elements.deleteCharacterBtn.addEventListener('click', () => {
-        console.log('Delete character button clicked');
-        deleteCurrentCharacter();
-    });
+    if (elements.saveCharacterBtn) {
+        elements.saveCharacterBtn.addEventListener('click', () => {
+            saveCurrentCharacter();
+            showSaveNotification();
+        });
+    }
     
-    elements.saveCharacterBtn.addEventListener('click', () => {
-        console.log('Save character button clicked');
-        saveCurrentCharacter();
-        showSaveNotification();
-    });
+    if (elements.characterName) {
+        elements.characterName.addEventListener('input', handleCharacterNameChange);
+    }
     
-    elements.addMagicalItemBtn.addEventListener('click', () => {
-        console.log('Add magical item button clicked');
-        addMagicalItem();
-    });
+    if (elements.profession) {
+        elements.profession.addEventListener('input', handleProfessionChange);
+    }
     
-    elements.addNoteBtn.addEventListener('click', () => {
-        console.log('Add note button clicked');
-        addNote();
-    });
-
-    // Add input event listeners
-    elements.characterName.addEventListener('input', () => {
-        console.log('Character name changed');
-        elements.saveCharacterBtn.classList.add('unsaved-changes');
-    });
+    if (elements.advancedProfession) {
+        elements.advancedProfession.addEventListener('input', handleAdvancedProfessionChange);
+    }
     
-    elements.profession.addEventListener('input', () => {
-        console.log('Profession changed');
-        elements.saveCharacterBtn.classList.add('unsaved-changes');
-    });
+    if (elements.addMagicalItemBtn) {
+        elements.addMagicalItemBtn.addEventListener('click', addMagicalItem);
+    }
     
-    elements.advancedProfession.addEventListener('input', () => {
-        console.log('Advanced profession changed');
-        elements.saveCharacterBtn.classList.add('unsaved-changes');
-    });
-    
-    console.log('Event listeners setup complete');
+    if (elements.addNoteBtn) {
+        elements.addNoteBtn.addEventListener('click', addNote);
+    }
 }
 
 // Wait for both DOM and Chart.js to be ready
-window.addEventListener('load', () => {
-    console.log('Window loaded, initializing application...');
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, initializing application...');
     init();
 });
 
 // Initialize radar charts
-function initializeCharts() {
+function initCharts() {
     // Destroy existing charts if they exist
     if (heroicStatsChart) {
         heroicStatsChart.destroy();
@@ -323,8 +311,15 @@ function initializeCharts() {
         }
     };
 
-    heroicStatsChart = new Chart(document.getElementById('heroicStatsChart'), heroicConfig);
-    meatStatsChart = new Chart(document.getElementById('meatStatsChart'), meatConfig);
+    const heroicChartElement = document.getElementById('heroicStatsChart');
+    const meatChartElement = document.getElementById('meatStatsChart');
+
+    if (heroicChartElement) {
+        heroicStatsChart = new Chart(heroicChartElement, heroicConfig);
+    }
+    if (meatChartElement) {
+        meatStatsChart = new Chart(meatChartElement, meatConfig);
+    }
 
     // Add dropdown menus for each stat
     addStatDropdowns('heroicStatsChart', HEROIC_STATS, 'heroic');
@@ -537,6 +532,8 @@ function createNewCharacter() {
 
 // Update character select dropdown
 function updateCharacterSelect() {
+    if (!elements.characterSelect) return;
+    
     elements.characterSelect.innerHTML = '<option value="">Select a Character</option>';
     characters.forEach(char => {
         const option = document.createElement('option');
@@ -1302,6 +1299,26 @@ function deleteCurrentCharacter() {
         if (elements.saveCharacterBtn) elements.saveCharacterBtn.classList.remove('unsaved-changes');
         console.log('Character deleted successfully');
     }
+}
+
+function handleCharacterSelect(e) {
+    console.log('Character select changed:', e.target.value);
+    loadCharacter(e.target.value);
+}
+
+function handleCharacterNameChange() {
+    console.log('Character name changed');
+    elements.saveCharacterBtn.classList.add('unsaved-changes');
+}
+
+function handleProfessionChange() {
+    console.log('Profession changed');
+    elements.saveCharacterBtn.classList.add('unsaved-changes');
+}
+
+function handleAdvancedProfessionChange() {
+    console.log('Advanced profession changed');
+    elements.saveCharacterBtn.classList.add('unsaved-changes');
 }
 
 document.addEventListener('DOMContentLoaded', init); 
