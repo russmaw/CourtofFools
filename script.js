@@ -11,6 +11,49 @@ const RATING_SYSTEM = {
     'SSS': { value: 9, description: 'Mythic - Unprecedented power or ability, unique in the world' }
 };
 
+// Global DOM element references
+let elements = {
+    addCharacterBtn: null,
+    printBtn: null,
+    characterSelect: null,
+    deleteCharacterBtn: null,
+    saveCharacterBtn: null,
+    characterProfile: null,
+    characterName: null,
+    profession: null,
+    advancedProfession: null,
+    magicalItemsList: null,
+    notesList: null,
+    addMagicalItemBtn: null,
+    addNoteBtn: null,
+    heroicRating: null,
+    meatRating: null
+};
+
+// Function to get fresh references to all DOM elements
+function getDOMElements() {
+    elements = {
+        addCharacterBtn: document.getElementById('addCharacterBtn'),
+        printBtn: document.getElementById('printBtn'),
+        characterSelect: document.getElementById('characterSelect'),
+        deleteCharacterBtn: document.getElementById('deleteCharacterBtn'),
+        saveCharacterBtn: document.getElementById('saveCharacterBtn'),
+        characterProfile: document.getElementById('characterProfile'),
+        characterName: document.getElementById('characterName'),
+        profession: document.getElementById('profession'),
+        advancedProfession: document.getElementById('advancedProfession'),
+        magicalItemsList: document.getElementById('magicalItemsList'),
+        notesList: document.getElementById('notesList'),
+        addMagicalItemBtn: document.getElementById('addMagicalItemBtn'),
+        addNoteBtn: document.getElementById('addNoteBtn'),
+        heroicRating: document.getElementById('heroicRating'),
+        meatRating: document.getElementById('meatRating')
+    };
+    
+    // Debug logging for DOM elements
+    console.log('DOM Elements:', elements);
+}
+
 // Stats categories and their types
 const STAT_TYPES = {
     'Damage Output': 'physical',
@@ -85,45 +128,17 @@ function init() {
     characters = characters.map(cleanupCharacterData);
     saveCharacters();
     
-    // Get DOM Elements
-    const addCharacterBtn = document.getElementById('addCharacterBtn');
-    const printBtn = document.getElementById('printBtn');
-    const characterSelect = document.getElementById('characterSelect');
-    const deleteCharacterBtn = document.getElementById('deleteCharacterBtn');
-    const saveCharacterBtn = document.getElementById('saveCharacterBtn');
-    const characterProfile = document.getElementById('characterProfile');
-    const characterName = document.getElementById('characterName');
-    const profession = document.getElementById('profession');
-    const advancedProfession = document.getElementById('advancedProfession');
-    const magicalItemsList = document.getElementById('magicalItemsList');
-    const notesList = document.getElementById('notesList');
-    const addMagicalItemBtn = document.getElementById('addMagicalItemBtn');
-    const addNoteBtn = document.getElementById('addNoteBtn');
-
-    // Debug logging for DOM elements
-    console.log('DOM Elements:', {
-        addCharacterBtn,
-        printBtn,
-        characterSelect,
-        deleteCharacterBtn,
-        saveCharacterBtn,
-        characterName,
-        profession,
-        advancedProfession,
-        magicalItemsList,
-        notesList,
-        addMagicalItemBtn,
-        addNoteBtn
-    });
+    // Get fresh references to all DOM elements
+    getDOMElements();
     
-    // Initialize charts first
+    // Setup event listeners first
+    setupEventListeners();
+    
+    // Then initialize charts
     initializeCharts();
     
-    // Then create custom dropdown
+    // Finally create custom dropdown
     createCustomDropdown();
-    
-    // Finally setup event listeners
-    setupEventListeners();
     
     console.log('Application initialized');
 }
@@ -132,25 +147,16 @@ function init() {
 function setupEventListeners() {
     console.log('Setting up event listeners...');
     
-    // Get fresh references to the elements
-    const addCharacterBtn = document.getElementById('addCharacterBtn');
-    const printBtn = document.getElementById('printBtn');
-    const characterSelect = document.getElementById('characterSelect');
-    const deleteCharacterBtn = document.getElementById('deleteCharacterBtn');
-    const saveCharacterBtn = document.getElementById('saveCharacterBtn');
-    const addMagicalItemBtn = document.getElementById('addMagicalItemBtn');
-    const addNoteBtn = document.getElementById('addNoteBtn');
-    const characterName = document.getElementById('characterName');
-    const profession = document.getElementById('profession');
-    const advancedProfession = document.getElementById('advancedProfession');
+    // Get fresh references to all elements
+    getDOMElements();
     
     // Add event listeners
-    addCharacterBtn.addEventListener('click', () => {
+    elements.addCharacterBtn.addEventListener('click', () => {
         console.log('Add character button clicked');
         createNewCharacter();
     });
     
-    printBtn.addEventListener('click', () => {
+    elements.printBtn.addEventListener('click', () => {
         console.log('Print button clicked');
         if (!currentCharacter) {
             alert('Please select a character to print');
@@ -159,46 +165,46 @@ function setupEventListeners() {
         window.print();
     });
     
-    characterSelect.addEventListener('change', (e) => {
+    elements.characterSelect.addEventListener('change', (e) => {
         console.log('Character select changed:', e.target.value);
         loadCharacter(e.target.value);
     });
     
-    deleteCharacterBtn.addEventListener('click', () => {
+    elements.deleteCharacterBtn.addEventListener('click', () => {
         console.log('Delete character button clicked');
         deleteCurrentCharacter();
     });
     
-    saveCharacterBtn.addEventListener('click', () => {
+    elements.saveCharacterBtn.addEventListener('click', () => {
         console.log('Save character button clicked');
         saveCurrentCharacter();
         showSaveNotification();
     });
     
-    addMagicalItemBtn.addEventListener('click', () => {
+    elements.addMagicalItemBtn.addEventListener('click', () => {
         console.log('Add magical item button clicked');
         addMagicalItem();
     });
     
-    addNoteBtn.addEventListener('click', () => {
+    elements.addNoteBtn.addEventListener('click', () => {
         console.log('Add note button clicked');
         addNote();
     });
 
     // Add input event listeners
-    characterName.addEventListener('input', () => {
+    elements.characterName.addEventListener('input', () => {
         console.log('Character name changed');
-        saveCharacterBtn.classList.add('unsaved-changes');
+        elements.saveCharacterBtn.classList.add('unsaved-changes');
     });
     
-    profession.addEventListener('input', () => {
+    elements.profession.addEventListener('input', () => {
         console.log('Profession changed');
-        saveCharacterBtn.classList.add('unsaved-changes');
+        elements.saveCharacterBtn.classList.add('unsaved-changes');
     });
     
-    advancedProfession.addEventListener('click', () => {
+    elements.advancedProfession.addEventListener('input', () => {
         console.log('Advanced profession changed');
-        saveCharacterBtn.classList.add('unsaved-changes');
+        elements.saveCharacterBtn.classList.add('unsaved-changes');
     });
     
     console.log('Event listeners setup complete');
@@ -423,7 +429,7 @@ function addStatDropdowns(chartId, stats, type) {
             }
             
             updateOverallRatings(currentCharacter);
-            saveCharacterBtn.classList.add('unsaved-changes');
+            elements.saveCharacterBtn.classList.add('unsaved-changes');
         });
         
         dropdownWrapper.appendChild(label);
@@ -530,17 +536,17 @@ function createNewCharacter() {
 
 // Update character select dropdown
 function updateCharacterSelect() {
-    characterSelect.innerHTML = '<option value="">Select a Character</option>';
+    elements.characterSelect.innerHTML = '<option value="">Select a Character</option>';
     characters.forEach(char => {
         const option = document.createElement('option');
         option.value = char.id;
         option.textContent = char.name || 'Unnamed Character';
-        characterSelect.appendChild(option);
+        elements.characterSelect.appendChild(option);
     });
     
     // If there's a current character, make sure it's selected
     if (currentCharacter) {
-        characterSelect.value = currentCharacter.id;
+        elements.characterSelect.value = currentCharacter.id;
     }
 }
 
@@ -714,25 +720,21 @@ function loadCharacter(characterId) {
     // Clean up and validate character data
     currentCharacter = cleanupCharacterData(currentCharacter);
 
-    // Update form fields
-    const characterName = document.getElementById('characterName');
-    const profession = document.getElementById('profession');
-    const advancedProfession = document.getElementById('advancedProfession');
-    const magicalItemsList = document.getElementById('magicalItemsList');
-    const notesList = document.getElementById('notesList');
-    const saveCharacterBtn = document.getElementById('saveCharacterBtn');
+    // Get fresh references to elements
+    getDOMElements();
 
-    if (characterName) characterName.value = currentCharacter.name || '';
-    if (profession) profession.value = currentCharacter.profession || '';
-    if (advancedProfession) advancedProfession.value = currentCharacter.advancedProfession || '';
+    // Update form fields
+    if (elements.characterName) elements.characterName.value = currentCharacter.name || '';
+    if (elements.profession) elements.profession.value = currentCharacter.profession || '';
+    if (elements.advancedProfession) elements.advancedProfession.value = currentCharacter.advancedProfession || '';
 
     // Update charts
     updateChart(heroicStatsChart, currentCharacter.heroicStats, HEROIC_STATS);
     updateChart(meatStatsChart, currentCharacter.meatStats, MEAT_STATS);
 
     // Update magical items
-    if (magicalItemsList) {
-        magicalItemsList.innerHTML = '';
+    if (elements.magicalItemsList) {
+        elements.magicalItemsList.innerHTML = '';
         currentCharacter.magicalItems.forEach(item => {
             // Clean up modifiers in magical items
             if (item.meatModifiers && 'Range' in item.meatModifiers) {
@@ -743,8 +745,8 @@ function loadCharacter(characterId) {
     }
 
     // Update notes
-    if (notesList) {
-        notesList.innerHTML = '';
+    if (elements.notesList) {
+        elements.notesList.innerHTML = '';
         currentCharacter.notes.forEach(note => {
             // Clean up modifiers in notes
             if (note.meatModifiers && 'Range' in note.meatModifiers) {
@@ -758,7 +760,7 @@ function loadCharacter(characterId) {
     updateOverallRatings(currentCharacter);
     
     // Remove unsaved changes indicator
-    if (saveCharacterBtn) saveCharacterBtn.classList.remove('unsaved-changes');
+    if (elements.saveCharacterBtn) elements.saveCharacterBtn.classList.remove('unsaved-changes');
     
     console.log('Character loaded successfully');
 }
@@ -873,10 +875,10 @@ function addMagicalItem(itemData = {}) {
     
     // Update event listeners
     itemName.addEventListener('input', () => {
-        saveCharacterBtn.classList.add('unsaved-changes');
+        elements.saveCharacterBtn.classList.add('unsaved-changes');
     });
     itemDescription.addEventListener('input', () => {
-        saveCharacterBtn.classList.add('unsaved-changes');
+        elements.saveCharacterBtn.classList.add('unsaved-changes');
     });
     deleteBtn.addEventListener('click', () => {
         itemContainer.remove();
@@ -888,7 +890,7 @@ function addMagicalItem(itemData = {}) {
     itemContainer.appendChild(itemDescription);
     itemContainer.appendChild(statModifiers);
     itemContainer.appendChild(deleteBtn);
-    magicalItemsList.appendChild(itemContainer);
+    elements.magicalItemsList.appendChild(itemContainer);
 }
 
 // Add note
@@ -988,10 +990,10 @@ function addNote(noteData = {}) {
     
     // Update event listeners
     noteTitle.addEventListener('input', () => {
-        saveCharacterBtn.classList.add('unsaved-changes');
+        elements.saveCharacterBtn.classList.add('unsaved-changes');
     });
     noteContent.addEventListener('input', () => {
-        saveCharacterBtn.classList.add('unsaved-changes');
+        elements.saveCharacterBtn.classList.add('unsaved-changes');
     });
     deleteBtn.addEventListener('click', () => {
         noteContainer.remove();
@@ -1003,7 +1005,7 @@ function addNote(noteData = {}) {
     noteContainer.appendChild(noteContent);
     noteContainer.appendChild(statModifiers);
     noteContainer.appendChild(deleteBtn);
-    notesList.appendChild(noteContainer);
+    elements.notesList.appendChild(noteContainer);
 }
 
 // Save current character data
@@ -1015,14 +1017,14 @@ function saveCurrentCharacter() {
     }
 
     // Update character data
-    currentCharacter.name = characterName.value;
-    currentCharacter.profession = profession.value;
-    currentCharacter.advancedProfession = advancedProfession.value;
+    currentCharacter.name = elements.characterName.value;
+    currentCharacter.profession = elements.profession.value;
+    currentCharacter.advancedProfession = elements.advancedProfession.value;
 
     console.log('Updated character data:', currentCharacter);
 
     // Save magical items with modifiers
-    currentCharacter.magicalItems = Array.from(magicalItemsList.children).map(item => ({
+    currentCharacter.magicalItems = Array.from(elements.magicalItemsList.children).map(item => ({
         name: item.querySelector('.item-name').value,
         description: item.querySelector('.item-description').value,
         heroicModifiers: getModifiersFromContainer(item, 'heroic'),
@@ -1030,7 +1032,7 @@ function saveCurrentCharacter() {
     }));
 
     // Save notes with modifiers
-    currentCharacter.notes = Array.from(notesList.children).map(note => ({
+    currentCharacter.notes = Array.from(elements.notesList.children).map(note => ({
         title: note.querySelector('.note-title').value,
         content: note.querySelector('.note-content').value,
         heroicModifiers: getModifiersFromContainer(note, 'heroic'),
@@ -1094,14 +1096,14 @@ function saveCurrentCharacter() {
     }
     
     // Remove unsaved changes indicator
-    saveCharacterBtn.classList.remove('unsaved-changes');
+    elements.saveCharacterBtn.classList.remove('unsaved-changes');
     console.log('Character saved successfully');
 }
 
 // Get modifiers from a container
 function getModifiersFromContainer(container, type) {
     const modifiers = {};
-    const modifierGroup = container.querySelector(`.modifier-group:has(h4:contains('${type}'))`);
+    const modifierGroup = container.querySelector(`.modifier-group h4:contains('${type}')`)?.parentElement;
     if (modifierGroup) {
         modifierGroup.querySelectorAll('.stat-modifier').forEach(mod => {
             const label = mod.querySelector('label');
@@ -1169,8 +1171,8 @@ function saveCharacters() {
 // Calculate and update overall ratings
 function updateOverallRatings(character) {
     if (!character) {
-        document.getElementById('heroicRating').textContent = '';
-        document.getElementById('meatRating').textContent = '';
+        elements.heroicRating.textContent = '';
+        elements.meatRating.textContent = '';
         return;
     }
 
@@ -1179,17 +1181,14 @@ function updateOverallRatings(character) {
     const meatAverage = calculateAverageRating(character.meatStats);
 
     // Update the display elements
-    const heroicRatingElement = document.getElementById('heroicRating');
-    const meatRatingElement = document.getElementById('meatRating');
-
-    if (heroicRatingElement) {
-        heroicRatingElement.textContent = `Heroic Rating: ${heroicAverage}`;
-        heroicRatingElement.style.color = getRatingColor(heroicAverage);
+    if (elements.heroicRating) {
+        elements.heroicRating.textContent = `Heroic Rating: ${heroicAverage}`;
+        elements.heroicRating.style.color = getRatingColor(heroicAverage);
     }
 
-    if (meatRatingElement) {
-        meatRatingElement.textContent = `Meat Rating: ${meatAverage}`;
-        meatRatingElement.style.color = getRatingColor(meatAverage);
+    if (elements.meatRating) {
+        elements.meatRating.textContent = `Meat Rating: ${meatAverage}`;
+        elements.meatRating.style.color = getRatingColor(meatAverage);
     }
 }
 
@@ -1247,35 +1246,29 @@ function deleteCurrentCharacter() {
         // Reset current character
         currentCharacter = null;
         
-        // Clear form
-        const characterName = document.getElementById('characterName');
-        const profession = document.getElementById('profession');
-        const advancedProfession = document.getElementById('advancedProfession');
-        const magicalItemsList = document.getElementById('magicalItemsList');
-        const notesList = document.getElementById('notesList');
-        const saveCharacterBtn = document.getElementById('saveCharacterBtn');
+        // Get fresh references to elements
+        getDOMElements();
         
-        if (characterName) characterName.value = '';
-        if (profession) profession.value = '';
-        if (advancedProfession) advancedProfession.value = '';
-        if (magicalItemsList) magicalItemsList.innerHTML = '';
-        if (notesList) notesList.innerHTML = '';
+        // Clear form
+        if (elements.characterName) elements.characterName.value = '';
+        if (elements.profession) elements.profession.value = '';
+        if (elements.advancedProfession) elements.advancedProfession.value = '';
+        if (elements.magicalItemsList) elements.magicalItemsList.innerHTML = '';
+        if (elements.notesList) elements.notesList.innerHTML = '';
         
         // Update charts
         updateChart(heroicStatsChart, {}, HEROIC_STATS);
         updateChart(meatStatsChart, {}, MEAT_STATS);
         
         // Clear overall ratings
-        const heroicRating = document.getElementById('heroicRating');
-        const meatRating = document.getElementById('meatRating');
-        if (heroicRating) heroicRating.textContent = '';
-        if (meatRating) meatRating.textContent = '';
+        if (elements.heroicRating) elements.heroicRating.textContent = '';
+        if (elements.meatRating) elements.meatRating.textContent = '';
         
         // Recreate the dropdown
         createCustomDropdown();
         
         // Remove unsaved changes indicator
-        if (saveCharacterBtn) saveCharacterBtn.classList.remove('unsaved-changes');
+        if (elements.saveCharacterBtn) elements.saveCharacterBtn.classList.remove('unsaved-changes');
         console.log('Character deleted successfully');
     }
 }
