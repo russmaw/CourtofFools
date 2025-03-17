@@ -288,12 +288,13 @@ select {
     .save-notification,
     .stat-dropdowns,
     .sort-control,
-    .custom-dropdown-wrapper {
+    .custom-dropdown-wrapper,
+    #saveCharacterBtn {
         display: none !important;
     }
 
     /* Show only the character information section */
-    .character-information {
+    .character-profile {
         display: block !important;
         width: 100% !important;
         max-width: none !important;
@@ -311,6 +312,7 @@ select {
         max-width: 450px !important;
         margin: 20px auto !important;
         page-break-inside: avoid;
+        background: white !important;
     }
 
     /* Ensure stats breakdown is visible */
@@ -324,7 +326,7 @@ select {
 
     /* Ensure magical items and notes are visible */
     .magical-items,
-    .notes {
+    .notes-section {
         display: block !important;
         width: 100% !important;
         max-width: none !important;
@@ -365,7 +367,7 @@ select {
     }
 
     /* Ensure proper page breaks */
-    .character-information > * {
+    .character-profile > * {
         page-break-inside: avoid;
     }
 
@@ -373,6 +375,11 @@ select {
     * {
         animation: none !important;
         transition: none !important;
+    }
+
+    /* Hide PDF container during normal print */
+    .pdf-container {
+        display: none !important;
     }
 }
 

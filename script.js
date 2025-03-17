@@ -1587,8 +1587,12 @@ function generatePDF() {
             }, 1000);
         });
     } else {
-        // For other devices, use the standard save method
+        // For PC, use the standard save method
         html2pdf().set(opt).from(container).save().then(() => {
+            container.remove();
+        }).catch(error => {
+            console.error('PDF generation failed:', error);
+            alert('Failed to generate PDF. Please try again.');
             container.remove();
         });
     }
