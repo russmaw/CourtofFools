@@ -85,6 +85,7 @@ function init() {
     
     // Get DOM Elements
     const addCharacterBtn = document.getElementById('addCharacterBtn');
+    const printBtn = document.getElementById('printBtn');
     const characterSelect = document.getElementById('characterSelect');
     const deleteCharacterBtn = document.getElementById('deleteCharacterBtn');
     const saveCharacterBtn = document.getElementById('saveCharacterBtn');
@@ -100,6 +101,7 @@ function init() {
     // Debug logging for DOM elements
     console.log('DOM Elements:', {
         addCharacterBtn,
+        printBtn,
         characterSelect,
         deleteCharacterBtn,
         saveCharacterBtn,
@@ -130,6 +132,7 @@ function setupEventListeners() {
     
     // Get fresh references to the elements
     const addCharacterBtn = document.getElementById('addCharacterBtn');
+    const printBtn = document.getElementById('printBtn');
     const characterSelect = document.getElementById('characterSelect');
     const deleteCharacterBtn = document.getElementById('deleteCharacterBtn');
     const saveCharacterBtn = document.getElementById('saveCharacterBtn');
@@ -143,6 +146,15 @@ function setupEventListeners() {
     addCharacterBtn.addEventListener('click', () => {
         console.log('Add character button clicked');
         createNewCharacter();
+    });
+    
+    printBtn.addEventListener('click', () => {
+        console.log('Print button clicked');
+        if (!currentCharacter) {
+            alert('Please select a character to print');
+            return;
+        }
+        window.print();
     });
     
     characterSelect.addEventListener('change', (e) => {
