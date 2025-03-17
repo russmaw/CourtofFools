@@ -293,7 +293,20 @@ select {
         display: none;
     }
 
-    /* Move overall rating under basic info */
+    /* Profile header and basic info */
+    .profile-header {
+        margin-bottom: 0;
+        border-bottom: 1px solid #000;
+        padding-bottom: 1rem;
+        page-break-after: avoid;
+    }
+
+    .basic-info {
+        margin-bottom: 0;
+        page-break-after: avoid;
+    }
+
+    /* Overall rating positioning */
     .overall-rating {
         position: relative;
         width: 100%;
@@ -302,7 +315,7 @@ select {
         background-color: white;
         border: 2px solid #000;
         border-radius: 0;
-        page-break-inside: avoid;
+        page-break-after: always;
         text-align: center;
     }
 
@@ -319,17 +332,7 @@ select {
         font-weight: bold;
     }
 
-    /* Adjust profile header */
-    .profile-header {
-        margin-bottom: 0;
-        border-bottom: 1px solid #000;
-        padding-bottom: 1rem;
-    }
-
-    .basic-info {
-        margin-bottom: 1rem;
-    }
-
+    /* Stats container and other sections */
     .stats-container {
         page-break-inside: avoid;
         margin-top: 2rem;
