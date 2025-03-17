@@ -20,7 +20,6 @@ const STAT_TYPES = {
     'Magic': 'physical',
     'Tactics': 'social',
     'Durability': 'physical',
-    'Range': 'physical',
     'Fighting Prowess': 'physical',
     'Likeability': 'social',
     'Intelligence': 'social',
@@ -61,8 +60,7 @@ const MEAT_STATS = [
     'Tactics',
     'Intelligence',
     'Durability',
-    'Speed',
-    'Range'
+    'Speed'
 ];
 
 // Initialize charts
