@@ -305,15 +305,11 @@ select {
     .save-btn,
     .chart-options,
     .chart-controls,
-    .chart-option,
-    .chart-option label,
-    .chart-option input,
-    .chart-option select,
-    .chart-option button {
+    .chart-option {
         display: none !important;
     }
 
-    /* Show only the character information section */
+    /* Show the character profile */
     .character-profile {
         display: block !important;
         width: 100% !important;
@@ -326,31 +322,10 @@ select {
         border: none !important;
     }
 
-    /* Chart container styling */
-    .chart-container {
-        display: block !important;
-        width: 100% !important;
-        max-width: 450px !important;
-        margin: 20px auto !important;
-        page-break-inside: avoid !important;
-        background: white !important;
-        border: 1px solid #ddd !important;
-        padding: 15px !important;
-    }
-
-    /* Ensure charts are visible and properly sized */
-    canvas {
-        display: block !important;
-        visibility: visible !important;
-        width: 100% !important;
-        height: auto !important;
-        max-width: 400px !important;
-        margin: 0 auto !important;
-    }
-
     /* Basic info styling */
     .basic-info {
         margin-bottom: 20px !important;
+        display: block !important;
     }
 
     .basic-info label {
@@ -367,6 +342,27 @@ select {
         background: none !important;
         padding: 0 !important;
         margin-bottom: 10px !important;
+    }
+
+    /* Chart container styling */
+    .chart-container {
+        display: block !important;
+        width: 100% !important;
+        max-width: 450px !important;
+        margin: 20px auto !important;
+        page-break-inside: avoid !important;
+        background: white !important;
+        border: 1px solid #ddd !important;
+        padding: 15px !important;
+    }
+
+    /* Ensure charts are visible */
+    canvas {
+        display: block !important;
+        width: 100% !important;
+        height: auto !important;
+        max-width: 400px !important;
+        margin: 0 auto !important;
     }
 
     /* Stats container styling */
@@ -444,12 +440,11 @@ select {
         margin: 10px 0 !important;
     }
 
-    /* Remove any hover effects */
+    /* Remove any hover effects and animations */
     *:hover {
         background: none !important;
     }
 
-    /* Remove any animations or transitions */
     * {
         animation: none !important;
         transition: none !important;
@@ -459,104 +454,11 @@ select {
     .character-profile > * {
         page-break-inside: avoid !important;
     }
-
-    /* Hide PDF container during normal print */
-    .pdf-container {
-        display: none !important;
-    }
 }
 
-/* PDF Generation Styles */
+/* PDF container styles for normal display */
 .pdf-container {
-    position: fixed;
-    left: -9999px;
-    top: -9999px;
-    width: 210mm; /* A4 width */
-    padding: 20mm; /* A4 margins */
-    background: white;
-    box-sizing: border-box;
-}
-
-.pdf-container .character-profile {
-    width: 100%;
-    max-width: none;
-    margin: 0;
-    padding: 0;
-    box-shadow: none;
-}
-
-.pdf-container .chart-container {
-    max-width: 100%;
-    margin: 20px auto;
-}
-
-.pdf-container .stat-dropdowns,
-.pdf-container .modifier-controls,
-.pdf-container .delete-btn,
-.pdf-container .save-btn,
-.pdf-container .add-modifier-btn,
-.pdf-container .remove-modifier-btn,
-.pdf-container .secondary-btn {
     display: none;
-}
-
-.pdf-container .magical-item,
-.pdf-container .note {
-    break-inside: avoid;
-    page-break-inside: avoid;
-    margin-bottom: 20px;
-    padding: 15px;
-    border: 1px solid #ddd;
-}
-
-.pdf-container .item-name,
-.pdf-container .note-title {
-    font-weight: bold;
-    margin-bottom: 10px;
-    display: block;
-}
-
-.pdf-container .item-description,
-.pdf-container .note-content {
-    margin-bottom: 10px;
-    display: block;
-}
-
-.pdf-container .stat-modifier {
-    display: inline-block;
-    margin-right: 15px;
-    margin-bottom: 5px;
-}
-
-.pdf-container .stat-modifier label {
-    margin-right: 5px;
-}
-
-.pdf-container .stat-modifier select {
-    display: none;
-}
-
-.pdf-container .stat-modifier::after {
-    content: attr(data-value);
-    margin-left: 5px;
-}
-
-@media print {
-    body * {
-        visibility: hidden;
-    }
-    .pdf-container,
-    .pdf-container * {
-        visibility: visible;
-    }
-    .pdf-container {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        padding: 0;
-    }
 }
 
 /* Rating Selector Styles */

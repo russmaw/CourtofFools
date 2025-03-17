@@ -1515,39 +1515,19 @@ function handleAdvancedProfessionChange() {
 
 // Function to generate PDF
 function generatePDF() {
-    // Create a temporary container for the PDF content
-    const container = document.createElement('div');
-    container.className = 'pdf-container';
-    
-    // Clone the character profile
-    const profile = document.querySelector('.character-profile').cloneNode(true);
-    
-    // Remove buttons and interactive elements
-    const elementsToRemove = profile.querySelectorAll(
-        '.add-item-buttons, .delete-btn, .toggle-modifiers-btn, ' +
-        '.modifiers-container, .save-notification, .stat-dropdowns, ' +
-        '.sort-control, .custom-dropdown-wrapper, #saveCharacterBtn, ' +
-        '.header-buttons, .action-btn, .save-btn, .chart-options, ' +
-        '.chart-controls, .chart-option, .chart-option label, ' +
-        '.chart-option input, .chart-option select, .chart-option button'
-    );
-    elementsToRemove.forEach(el => el.remove());
-    
     // Convert input fields to spans
-    profile.querySelectorAll('input, textarea').forEach(input => {
+    const inputs = document.querySelectorAll('.character-profile input, .character-profile textarea');
+    const originalValues = new Map();
+    
+    inputs.forEach(input => {
+        originalValues.set(input, input.value);
         const span = document.createElement('span');
-        span.textContent = input.value || input.textContent;
+        span.textContent = input.value || '';
         input.parentNode.replaceChild(span, input);
     });
-    
-    // Add the cloned profile to the container
-    container.appendChild(profile);
-    
-    // Add the container to the body
-    document.body.appendChild(container);
-    
-    // Force Chart.js to redraw all charts in the container
-    const charts = container.querySelectorAll('canvas');
+
+    // Force Chart.js to redraw all charts
+    const charts = document.querySelectorAll('canvas');
     charts.forEach(canvas => {
         const chart = Chart.getChart(canvas);
         if (chart) {
@@ -1558,8 +1538,14 @@ function generatePDF() {
     // Print
     window.print();
     
-    // Remove the container after printing
-    document.body.removeChild(container);
+    // Restore input fields
+    originalValues.forEach((value, input) => {
+        const span = input.parentNode.querySelector('span');
+        if (span) {
+            span.parentNode.replaceChild(input, span);
+            input.value = value;
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', init); 
