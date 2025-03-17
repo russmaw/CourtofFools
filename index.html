@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mythic Adventures Bingo Book</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Mythic Adventures Bingo Book</h1>
+            <button id="addCharacterBtn" class="primary-btn">Add New Character</button>
+        </header>
+
+        <div class="character-selector">
+            <select id="characterSelect">
+                <option value="">Select a Character</option>
+            </select>
+        </div>
+
+        <div class="character-profile" id="characterProfile">
+            <div class="profile-header">
+                <div class="basic-info">
+                    <input type="text" id="characterName" placeholder="Character Name" class="profile-input">
+                    <input type="text" id="profession" placeholder="Profession" class="profile-input">
+                    <input type="text" id="advancedProfession" placeholder="Advanced Profession" class="profile-input">
+                </div>
+            </div>
+
+            <div class="stats-container">
+                <div class="stats-section">
+                    <h2>Character Stats (Heroic)</h2>
+                    <canvas id="heroicStatsChart"></canvas>
+                </div>
+                <div class="stats-section">
+                    <h2>Player Stats (Meat)</h2>
+                    <canvas id="meatStatsChart"></canvas>
+                </div>
+            </div>
+
+            <div class="overall-rating">
+                <h2>Overall Rating</h2>
+                <div id="heroicRating" class="rating-display"></div>
+                <div id="meatRating" class="rating-display"></div>
+            </div>
+
+            <div class="magical-items">
+                <h2>Magical Items</h2>
+                <div id="magicalItemsList"></div>
+                <button id="addMagicalItemBtn" class="secondary-btn">Add Magical Item</button>
+            </div>
+
+            <div class="notes-section">
+                <h2>Additional Notes</h2>
+                <div id="notesList"></div>
+                <button id="addNoteBtn" class="secondary-btn">Add Note</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Templates for dynamic content -->
+    <template id="magicalItemTemplate">
+        <div class="magical-item">
+            <input type="text" class="item-name" placeholder="Item Name">
+            <textarea class="item-description" placeholder="Item Description"></textarea>
+            <button class="delete-btn">Delete</button>
+        </div>
+    </template>
+
+    <template id="noteTemplate">
+        <div class="note">
+            <input type="text" class="note-title" placeholder="Note Title">
+            <textarea class="note-content" placeholder="Note Content"></textarea>
+            <button class="delete-btn">Delete</button>
+        </div>
+    </template>
+
+    <script src="script.js"></script>
+</body>
+</html> 

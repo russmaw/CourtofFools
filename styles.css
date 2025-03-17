@@ -1,0 +1,287 @@
+:root {
+    --primary-color: #1a1a1a;
+    --secondary-color: #2d2d2d;
+    --accent-color: #c41e3a;
+    --text-color: #e0e0e0;
+    --background-color: #121212;
+    --card-background: #1e1e1e;
+    --border-radius: 4px;
+    --spacing: 1rem;
+    --border-color: #333;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--background-color);
+    background-image: 
+        linear-gradient(45deg, rgba(0,0,0,0.1) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(0,0,0,0.1) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(0,0,0,0.1) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(0,0,0,0.1) 75%);
+    background-size: 20px 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing);
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing);
+    padding: var(--spacing);
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+header::before {
+    content: "TOP SECRET";
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--accent-color);
+    color: white;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    border-radius: 2px;
+}
+
+h1 {
+    color: var(--accent-color);
+    font-size: 2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 5px rgba(196,30,58,0.3);
+}
+
+.character-selector {
+    margin-bottom: var(--spacing);
+}
+
+select {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    font-size: 1rem;
+    background-color: var(--card-background);
+    color: var(--text-color);
+}
+
+.character-profile {
+    background-color: var(--card-background);
+    padding: var(--spacing);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+}
+
+.profile-header {
+    margin-bottom: var(--spacing);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: var(--spacing);
+}
+
+.basic-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing);
+}
+
+.profile-input {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing);
+    margin-bottom: var(--spacing);
+}
+
+.stats-section {
+    background-color: var(--secondary-color);
+    padding: var(--spacing);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.stats-section h2 {
+    color: var(--accent-color);
+    margin-bottom: var(--spacing);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.overall-rating {
+    text-align: center;
+    margin-bottom: var(--spacing);
+    padding: var(--spacing);
+    background-color: var(--secondary-color);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.rating-display {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+    color: var(--accent-color);
+}
+
+.magical-items, .notes-section {
+    margin-bottom: var(--spacing);
+}
+
+.magical-item, .note {
+    background-color: var(--secondary-color);
+    padding: var(--spacing);
+    margin-bottom: var(--spacing);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.item-name, .note-title {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--card-background);
+    color: var(--text-color);
+}
+
+.item-description, .note-content {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    min-height: 100px;
+    resize: vertical;
+    background-color: var(--card-background);
+    color: var(--text-color);
+}
+
+.primary-btn, .secondary-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.primary-btn {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.primary-btn:hover {
+    background-color: #a01830;
+    box-shadow: 0 0 10px rgba(196,30,58,0.3);
+}
+
+.secondary-btn {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.secondary-btn:hover {
+    background-color: var(--border-color);
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    margin-top: 0.5rem;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0.5rem;
+    }
+
+    header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
+
+    .basic-info {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background-color: white;
+        background-image: none;
+    }
+
+    .container {
+        max-width: none;
+        padding: 0;
+    }
+
+    .character-profile {
+        box-shadow: none;
+        padding: 0;
+        border: none;
+    }
+
+    button {
+        display: none;
+    }
+
+    .stats-container {
+        page-break-inside: avoid;
+    }
+
+    .magical-items, .notes-section {
+        page-break-inside: avoid;
+    }
+
+    header::before {
+        display: none;
+    }
+} 
