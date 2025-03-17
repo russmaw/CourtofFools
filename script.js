@@ -198,6 +198,14 @@ window.addEventListener('load', () => {
 
 // Initialize radar charts
 function initializeCharts() {
+    // Destroy existing charts if they exist
+    if (heroicStatsChart) {
+        heroicStatsChart.destroy();
+    }
+    if (meatStatsChart) {
+        meatStatsChart.destroy();
+    }
+
     const heroicConfig = {
         type: 'radar',
         data: {
@@ -544,12 +552,19 @@ function createCustomDropdown() {
         deleteBtn.onclick = (e) => {
             e.stopPropagation();
             if (confirm('Are you sure you want to delete this character?')) {
+                // Remove character from array
                 characters = characters.filter(c => c.id !== char.id);
+                
+                // Save to localStorage
                 saveCharacters();
+                
+                // If this was the current character, clear it
                 if (currentCharacter && currentCharacter.id === char.id) {
                     currentCharacter = null;
                     loadCharacter(null);
                 }
+                
+                // Recreate the dropdown
                 createCustomDropdown();
             }
         };
@@ -576,7 +591,11 @@ function createCustomDropdown() {
     
     // Replace the old select with the new wrapper
     const oldSelect = document.getElementById('characterSelect');
-    oldSelect.parentNode.replaceChild(wrapper, oldSelect);
+    if (oldSelect) {
+        oldSelect.parentNode.replaceChild(wrapper, oldSelect);
+    } else {
+        document.querySelector('.character-select-container').appendChild(wrapper);
+    }
     
     // Add change event listener to the new select
     select.addEventListener('change', (e) => {
@@ -1061,29 +1080,36 @@ function deleteCurrentCharacter() {
         currentCharacter = null;
         
         // Clear form
-        characterName.value = '';
-        profession.value = '';
-        advancedProfession.value = '';
-        magicalItemsList.innerHTML = '';
-        notesList.innerHTML = '';
+        const characterName = document.getElementById('characterName');
+        const profession = document.getElementById('profession');
+        const advancedProfession = document.getElementById('advancedProfession');
+        const magicalItemsList = document.getElementById('magicalItemsList');
+        const notesList = document.getElementById('notesList');
+        const saveCharacterBtn = document.getElementById('saveCharacterBtn');
         
-        // Update select dropdown
-        updateCharacterSelect();
+        if (characterName) characterName.value = '';
+        if (profession) profession.value = '';
+        if (advancedProfession) advancedProfession.value = '';
+        if (magicalItemsList) magicalItemsList.innerHTML = '';
+        if (notesList) notesList.innerHTML = '';
         
-        // Reset charts
+        // Update charts
         updateChart(heroicStatsChart, {}, HEROIC_STATS);
         updateChart(meatStatsChart, {}, MEAT_STATS);
         
         // Clear overall ratings
-        document.getElementById('heroicRating').textContent = '';
-        document.getElementById('meatRating').textContent = '';
+        const heroicRating = document.getElementById('heroicRating');
+        const meatRating = document.getElementById('meatRating');
+        if (heroicRating) heroicRating.textContent = '';
+        if (meatRating) meatRating.textContent = '';
         
-        // Reset character select to default option
-        characterSelect.value = '';
+        // Recreate the dropdown
+        createCustomDropdown();
         
         // Remove unsaved changes indicator
-        saveCharacterBtn.classList.remove('unsaved-changes');
+        if (saveCharacterBtn) saveCharacterBtn.classList.remove('unsaved-changes');
         console.log('Character deleted successfully');
     }
-} 
+}
+
 document.addEventListener('DOMContentLoaded', init); 
