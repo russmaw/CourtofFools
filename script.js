@@ -66,7 +66,8 @@ const STAT_TYPES = {
     'Fighting Prowess': 'physical',
     'Likeability': 'social',
     'Intelligence': 'social',
-    'Speed': 'physical'
+    'Speed': 'physical',
+    'Range': 'physical'
 };
 
 // Color scheme for stat types
