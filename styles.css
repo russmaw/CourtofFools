@@ -303,7 +303,7 @@ select {
     .chart-container {
         display: block !important;
         width: 100% !important;
-        max-width: 300px !important;
+        max-width: 450px !important;
         margin: 20px auto !important;
         page-break-inside: avoid;
     }
@@ -474,16 +474,55 @@ select {
     letter-spacing: 1px;
 }
 
+.modifier-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    margin: 1rem 0;
+    padding: 0.5rem;
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.modifier-type-select,
+.stat-select {
+    padding: 0.25rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.modifier-type-select {
+    min-width: 120px;
+}
+
+.stat-select {
+    min-width: 150px;
+}
+
+.add-modifier-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.9rem;
+}
+
 .stat-modifier {
     display: flex;
     align-items: center;
     gap: 0.5rem;
     margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    background-color: var(--secondary-color);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
 }
 
 .stat-modifier label {
     flex: 1;
     color: var(--text-color);
+    font-size: 0.9rem;
 }
 
 .modifier-select {
@@ -491,19 +530,34 @@ select {
     padding: 0.25rem;
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
-    background-color: var(--secondary-color);
+    background-color: var(--card-background);
     color: var(--text-color);
 }
 
-.modifier-select option {
-    background-color: var(--secondary-color);
-    color: var(--text-color);
+.remove-modifier-btn {
+    background: none;
+    border: none;
+    color: var(--accent-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 0.5rem;
+    line-height: 1;
+}
+
+.remove-modifier-btn:hover {
+    color: #a01830;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .stat-modifiers {
-        padding: 0.5rem;
+    .modifier-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .modifier-type-select,
+    .stat-select {
+        width: 100%;
     }
     
     .stat-modifier {
