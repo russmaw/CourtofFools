@@ -1513,42 +1513,53 @@ function handleAdvancedProfessionChange() {
     elements.saveCharacterBtn.classList.add('unsaved-changes');
 }
 
-// Generate PDF of character profile
+// Function to generate PDF
 function generatePDF() {
-    if (!currentCharacter) return;
-    
     // Create a temporary container for the PDF content
     const container = document.createElement('div');
     container.className = 'pdf-container';
     
     // Clone the character profile
-    const profileClone = elements.characterProfile.cloneNode(true);
+    const profile = document.querySelector('.character-profile').cloneNode(true);
     
     // Remove buttons and interactive elements
-    const elementsToRemove = profileClone.querySelectorAll('button, input, textarea, select, .character-controls, .add-item-buttons, .delete-btn, .toggle-modifiers-btn, .modifiers-container, .save-notification, .stat-dropdowns, .sort-control, .custom-dropdown-wrapper, #saveCharacterBtn, .header-buttons, .action-btn, .save-btn');
-    elementsToRemove.forEach(element => {
-        if (element) {
-            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                const span = document.createElement('span');
-                span.textContent = element.value || '';
-                element.parentNode.replaceChild(span, element);
-            } else {
-                element.remove();
-            }
-        }
+    const elementsToRemove = profile.querySelectorAll(
+        '.add-item-buttons, .delete-btn, .toggle-modifiers-btn, ' +
+        '.modifiers-container, .save-notification, .stat-dropdowns, ' +
+        '.sort-control, .custom-dropdown-wrapper, #saveCharacterBtn, ' +
+        '.header-buttons, .action-btn, .save-btn, .chart-options, ' +
+        '.chart-controls, .chart-option, .chart-option label, ' +
+        '.chart-option input, .chart-option select, .chart-option button'
+    );
+    elementsToRemove.forEach(el => el.remove());
+    
+    // Convert input fields to spans
+    profile.querySelectorAll('input, textarea').forEach(input => {
+        const span = document.createElement('span');
+        span.textContent = input.value || input.textContent;
+        input.parentNode.replaceChild(span, input);
     });
     
     // Add the cloned profile to the container
-    container.appendChild(profileClone);
+    container.appendChild(profile);
     
     // Add the container to the body
     document.body.appendChild(container);
+    
+    // Force Chart.js to redraw all charts in the container
+    const charts = container.querySelectorAll('canvas');
+    charts.forEach(canvas => {
+        const chart = Chart.getChart(canvas);
+        if (chart) {
+            chart.resize();
+        }
+    });
     
     // Print
     window.print();
     
     // Remove the container after printing
-    container.remove();
+    document.body.removeChild(container);
 }
 
 document.addEventListener('DOMContentLoaded', init); 

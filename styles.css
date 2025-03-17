@@ -323,6 +323,28 @@ select {
         border: none !important;
     }
 
+    /* Chart container styling */
+    .pdf-container .chart-container {
+        display: block !important;
+        width: 100% !important;
+        max-width: 450px !important;
+        margin: 20px auto !important;
+        page-break-inside: avoid !important;
+        background: white !important;
+        border: 1px solid #ddd !important;
+        padding: 15px !important;
+    }
+
+    /* Ensure charts are visible and properly sized */
+    .pdf-container canvas {
+        display: block !important;
+        visibility: visible !important;
+        width: 100% !important;
+        height: auto !important;
+        max-width: 400px !important;
+        margin: 0 auto !important;
+    }
+
     /* Basic info styling */
     .pdf-container .basic-info {
         margin-bottom: 20px !important;
@@ -354,18 +376,6 @@ select {
     .pdf-container .stats-section {
         margin-bottom: 20px !important;
         page-break-inside: avoid !important;
-        border: 1px solid #ddd !important;
-        padding: 15px !important;
-    }
-
-    /* Chart container styling */
-    .pdf-container .chart-container {
-        display: block !important;
-        width: 100% !important;
-        max-width: 450px !important;
-        margin: 20px auto !important;
-        page-break-inside: avoid !important;
-        background: white !important;
         border: 1px solid #ddd !important;
         padding: 15px !important;
     }
