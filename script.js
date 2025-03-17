@@ -1563,24 +1563,22 @@ function generatePDF() {
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     
     if (isIOS) {
-        // For iOS, generate the PDF and create a data URL
+        // For iOS, generate the PDF and open it in a new window
         html2pdf().set(opt).from(container).outputPdf().then(pdf => {
-            // Create a data URL from the PDF
-            const pdfDataUrl = URL.createObjectURL(new Blob([pdf], { type: 'application/pdf' }));
+            // Create a blob from the PDF
+            const blob = new Blob([pdf], { type: 'application/pdf' });
             
-            // Create a temporary link element
-            const link = document.createElement('a');
-            link.href = pdfDataUrl;
-            link.download = `${currentCharacter.name || 'character'}-profile.pdf`;
+            // Create a URL for the blob
+            const url = URL.createObjectURL(blob);
             
-            // Trigger the download
-            document.body.appendChild(link);
-            link.click();
+            // Open the PDF in a new window
+            window.open(url, '_blank');
             
             // Clean up
-            document.body.removeChild(link);
-            URL.revokeObjectURL(pdfDataUrl);
-            container.remove();
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+                container.remove();
+            }, 1000);
         });
     } else {
         // For other devices, use the standard save method
