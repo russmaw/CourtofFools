@@ -15,9 +15,12 @@
         </header>
 
         <div class="character-selector">
-            <select id="characterSelect">
-                <option value="">Select a Character</option>
-            </select>
+            <div class="character-controls">
+                <select id="characterSelect">
+                    <option value="">Select a Character</option>
+                </select>
+                <button id="deleteCharacterBtn" class="delete-btn">Delete Character</button>
+            </div>
         </div>
 
         <div class="character-profile" id="characterProfile">
@@ -31,11 +34,11 @@
 
             <div class="stats-container">
                 <div class="stats-section">
-                    <h2>Character Stats (Heroic)</h2>
+                    <h2>Heroic</h2>
                     <canvas id="heroicStatsChart"></canvas>
                 </div>
                 <div class="stats-section">
-                    <h2>Player Stats (Meat)</h2>
+                    <h2>Meat</h2>
                     <canvas id="meatStatsChart"></canvas>
                 </div>
             </div>
@@ -59,23 +62,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Templates for dynamic content -->
-    <template id="magicalItemTemplate">
-        <div class="magical-item">
-            <input type="text" class="item-name" placeholder="Item Name">
-            <textarea class="item-description" placeholder="Item Description"></textarea>
-            <button class="delete-btn">Delete</button>
-        </div>
-    </template>
-
-    <template id="noteTemplate">
-        <div class="note">
-            <input type="text" class="note-title" placeholder="Note Title">
-            <textarea class="note-content" placeholder="Note Content"></textarea>
-            <button class="delete-btn">Delete</button>
-        </div>
-    </template>
 
     <script src="script.js"></script>
 </body>
