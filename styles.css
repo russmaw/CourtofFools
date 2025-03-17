@@ -312,14 +312,57 @@ select {
     display: flex;
     gap: 1rem;
     align-items: center;
+    margin-bottom: 1rem;
 }
 
 .character-controls select {
     flex: 1;
 }
 
+.character-controls .primary-btn,
 .character-controls .delete-btn {
     white-space: nowrap;
+}
+
+.primary-btn.unsaved-changes {
+    background-color: #ffa500;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 165, 0, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 165, 0, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 165, 0, 0);
+    }
+}
+
+.save-notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--accent-color);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    z-index: 1000;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
 }
 
 /* Stat Modifiers Styles */
@@ -386,5 +429,58 @@ select {
     
     .modifier-select {
         width: 100%;
+    }
+}
+
+/* Stat Dropdowns Styles */
+.stat-dropdowns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.stat-dropdown-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.stat-dropdown-wrapper label {
+    color: var(--text-color);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-rating-select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    font-size: 0.9rem;
+}
+
+.stat-rating-select option {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    padding: 0.5rem;
+}
+
+/* Responsive adjustments for stat dropdowns */
+@media (max-width: 768px) {
+    .stat-dropdowns {
+        grid-template-columns: 1fr;
+        padding: 0.5rem;
+    }
+    
+    .stat-rating-select {
+        font-size: 0.8rem;
     }
 } 

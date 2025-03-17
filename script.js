@@ -77,6 +77,7 @@ let currentCharacter = null;
 const addCharacterBtn = document.getElementById('addCharacterBtn');
 const characterSelect = document.getElementById('characterSelect');
 const deleteCharacterBtn = document.getElementById('deleteCharacterBtn');
+const saveCharacterBtn = document.getElementById('saveCharacterBtn');
 const characterProfile = document.getElementById('characterProfile');
 const characterName = document.getElementById('characterName');
 const profession = document.getElementById('profession');
@@ -98,13 +99,23 @@ function setupEventListeners() {
     addCharacterBtn.addEventListener('click', createNewCharacter);
     characterSelect.addEventListener('change', loadCharacter);
     deleteCharacterBtn.addEventListener('click', deleteCurrentCharacter);
+    saveCharacterBtn.addEventListener('click', () => {
+        saveCurrentCharacter();
+        showSaveNotification();
+    });
     addMagicalItemBtn.addEventListener('click', () => addMagicalItem());
     addNoteBtn.addEventListener('click', () => addNote());
 
-    // Add event listeners for input changes
-    characterName.addEventListener('change', saveCurrentCharacter);
-    profession.addEventListener('change', saveCurrentCharacter);
-    advancedProfession.addEventListener('change', saveCurrentCharacter);
+    // Remove auto-save from input changes
+    characterName.addEventListener('input', () => {
+        saveCharacterBtn.classList.add('unsaved-changes');
+    });
+    profession.addEventListener('input', () => {
+        saveCharacterBtn.classList.add('unsaved-changes');
+    });
+    advancedProfession.addEventListener('input', () => {
+        saveCharacterBtn.classList.add('unsaved-changes');
+    });
 }
 
 // Initialize radar charts
@@ -150,35 +161,6 @@ function initializeCharts() {
                             ];
                         }
                     }
-                }
-            },
-            onClick: function(event, elements, chart) {
-                const rect = chart.canvas.getBoundingClientRect();
-                const x = event.clientX - rect.left;
-                const y = event.clientY - rect.top;
-                
-                // Get the clicked point in the chart
-                const points = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
-                
-                if (points.length) {
-                    const point = points[0];
-                    const datasetIndex = point.datasetIndex;
-                    const index = point.index;
-                    
-                    // Show rating selector
-                    showRatingSelector(event.clientX, event.clientY, (rating) => {
-                        chart.data.datasets[datasetIndex].data[index] = RATING_SYSTEM[rating].value;
-                        chart.update();
-                        
-                        // Save the changes
-                        if (chart === heroicStatsChart) {
-                            currentCharacter.heroicStats[HEROIC_STATS[index]] = rating;
-                        } else {
-                            currentCharacter.meatStats[MEAT_STATS[index]] = rating;
-                        }
-                        saveCurrentCharacter();
-                        updateOverallRatings(currentCharacter);
-                    });
                 }
             }
         }
@@ -226,41 +208,75 @@ function initializeCharts() {
                         }
                     }
                 }
-            },
-            onClick: function(event, elements, chart) {
-                const rect = chart.canvas.getBoundingClientRect();
-                const x = event.clientX - rect.left;
-                const y = event.clientY - rect.top;
-                
-                // Get the clicked point in the chart
-                const points = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
-                
-                if (points.length) {
-                    const point = points[0];
-                    const datasetIndex = point.datasetIndex;
-                    const index = point.index;
-                    
-                    // Show rating selector
-                    showRatingSelector(event.clientX, event.clientY, (rating) => {
-                        chart.data.datasets[datasetIndex].data[index] = RATING_SYSTEM[rating].value;
-                        chart.update();
-                        
-                        // Save the changes
-                        if (chart === heroicStatsChart) {
-                            currentCharacter.heroicStats[HEROIC_STATS[index]] = rating;
-                        } else {
-                            currentCharacter.meatStats[MEAT_STATS[index]] = rating;
-                        }
-                        saveCurrentCharacter();
-                        updateOverallRatings(currentCharacter);
-                    });
-                }
             }
         }
     };
 
     heroicStatsChart = new Chart(document.getElementById('heroicStatsChart'), heroicConfig);
     meatStatsChart = new Chart(document.getElementById('meatStatsChart'), meatConfig);
+
+    // Add dropdown menus for each stat
+    addStatDropdowns('heroicStatsChart', HEROIC_STATS, 'heroic');
+    addStatDropdowns('meatStatsChart', MEAT_STATS, 'meat');
+}
+
+// Add dropdown menus for stats
+function addStatDropdowns(chartId, stats, type) {
+    const chartContainer = document.getElementById(chartId).parentElement;
+    const dropdownsContainer = document.createElement('div');
+    dropdownsContainer.className = 'stat-dropdowns';
+    
+    stats.forEach(stat => {
+        const dropdownWrapper = document.createElement('div');
+        dropdownWrapper.className = 'stat-dropdown-wrapper';
+        
+        const label = document.createElement('label');
+        label.textContent = stat;
+        
+        const select = document.createElement('select');
+        select.className = 'stat-rating-select';
+        
+        // Add rating options
+        Object.keys(RATING_SYSTEM).forEach(rating => {
+            const option = document.createElement('option');
+            option.value = RATING_SYSTEM[rating].value;
+            option.textContent = `${rating} - ${RATING_SYSTEM[rating].description}`;
+            select.appendChild(option);
+        });
+        
+        // Set initial value
+        if (currentCharacter) {
+            const currentRating = type === 'heroic' ? 
+                currentCharacter.heroicStats[stat] : 
+                currentCharacter.meatStats[stat];
+            select.value = RATING_SYSTEM[currentRating].value;
+        }
+        
+        // Add change event listener
+        select.addEventListener('change', () => {
+            const rating = Object.keys(RATING_SYSTEM).find(key => 
+                RATING_SYSTEM[key].value === parseInt(select.value)
+            );
+            
+            if (type === 'heroic') {
+                currentCharacter.heroicStats[stat] = rating;
+                updateChart(heroicStatsChart, currentCharacter.heroicStats, HEROIC_STATS);
+            } else {
+                currentCharacter.meatStats[stat] = rating;
+                updateChart(meatStatsChart, currentCharacter.meatStats, MEAT_STATS);
+            }
+            
+            saveCurrentCharacter();
+            updateOverallRatings(currentCharacter);
+            saveCharacterBtn.classList.add('unsaved-changes');
+        });
+        
+        dropdownWrapper.appendChild(label);
+        dropdownWrapper.appendChild(select);
+        dropdownsContainer.appendChild(dropdownWrapper);
+    });
+    
+    chartContainer.appendChild(dropdownsContainer);
 }
 
 // Show rating selector popup
@@ -393,6 +409,19 @@ function updateChart(chart, stats, categories) {
     chart.update();
 }
 
+// Show save notification
+function showSaveNotification() {
+    const notification = document.createElement('div');
+    notification.className = 'save-notification';
+    notification.textContent = 'Changes saved!';
+    document.body.appendChild(notification);
+
+    // Remove notification after 2 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 2000);
+}
+
 // Add magical item
 function addMagicalItem(itemData = {}) {
     const itemContainer = document.createElement('div');
@@ -488,9 +517,13 @@ function addMagicalItem(itemData = {}) {
     deleteBtn.className = 'delete-btn';
     deleteBtn.textContent = 'Delete';
     
-    // Add event listeners
-    itemName.addEventListener('change', saveCurrentCharacter);
-    itemDescription.addEventListener('change', saveCurrentCharacter);
+    // Update event listeners
+    itemName.addEventListener('input', () => {
+        saveCharacterBtn.classList.add('unsaved-changes');
+    });
+    itemDescription.addEventListener('input', () => {
+        saveCharacterBtn.classList.add('unsaved-changes');
+    });
     deleteBtn.addEventListener('click', () => {
         itemContainer.remove();
         saveCurrentCharacter();
@@ -599,9 +632,13 @@ function addNote(noteData = {}) {
     deleteBtn.className = 'delete-btn';
     deleteBtn.textContent = 'Delete';
     
-    // Add event listeners
-    noteTitle.addEventListener('change', saveCurrentCharacter);
-    noteContent.addEventListener('change', saveCurrentCharacter);
+    // Update event listeners
+    noteTitle.addEventListener('input', () => {
+        saveCharacterBtn.classList.add('unsaved-changes');
+    });
+    noteContent.addEventListener('input', () => {
+        saveCharacterBtn.classList.add('unsaved-changes');
+    });
     deleteBtn.addEventListener('click', () => {
         noteContainer.remove();
         saveCurrentCharacter();
@@ -647,6 +684,9 @@ function saveCurrentCharacter() {
 
     saveCharacters();
     updateCharacterSelect();
+    
+    // Remove unsaved changes indicator
+    saveCharacterBtn.classList.remove('unsaved-changes');
 }
 
 // Get modifiers from a container
