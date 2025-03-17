@@ -81,6 +81,10 @@ function init() {
         return;
     }
     
+    // Clean up all existing characters
+    characters = characters.map(cleanupCharacterData);
+    saveCharacters();
+    
     // Get DOM Elements
     const addCharacterBtn = document.getElementById('addCharacterBtn');
     const printBtn = document.getElementById('printBtn');
@@ -192,7 +196,7 @@ function setupEventListeners() {
         saveCharacterBtn.classList.add('unsaved-changes');
     });
     
-    advancedProfession.addEventListener('input', () => {
+    advancedProfession.addEventListener('click', () => {
         console.log('Advanced profession changed');
         saveCharacterBtn.classList.add('unsaved-changes');
     });
@@ -662,6 +666,29 @@ function createCustomDropdown() {
     });
 }
 
+// Clean up old character data
+function cleanupCharacterData(character) {
+    // Remove Range from meat stats if it exists
+    if (character.meatStats && 'Range' in character.meatStats) {
+        delete character.meatStats['Range'];
+    }
+    
+    // Ensure all current stats exist with default values
+    MEAT_STATS.forEach(stat => {
+        if (!(stat in character.meatStats)) {
+            character.meatStats[stat] = 'F';
+        }
+    });
+    
+    HEROIC_STATS.forEach(stat => {
+        if (!(stat in character.heroicStats)) {
+            character.heroicStats[stat] = 'F';
+        }
+    });
+    
+    return character;
+}
+
 // Load character data
 function loadCharacter(characterId) {
     console.log('Loading character:', characterId);
@@ -684,6 +711,9 @@ function loadCharacter(characterId) {
         return;
     }
 
+    // Clean up and validate character data
+    currentCharacter = cleanupCharacterData(currentCharacter);
+
     // Update form fields
     const characterName = document.getElementById('characterName');
     const profession = document.getElementById('profession');
@@ -704,6 +734,10 @@ function loadCharacter(characterId) {
     if (magicalItemsList) {
         magicalItemsList.innerHTML = '';
         currentCharacter.magicalItems.forEach(item => {
+            // Clean up modifiers in magical items
+            if (item.meatModifiers && 'Range' in item.meatModifiers) {
+                delete item.meatModifiers['Range'];
+            }
             addMagicalItem(item);
         });
     }
@@ -712,6 +746,10 @@ function loadCharacter(characterId) {
     if (notesList) {
         notesList.innerHTML = '';
         currentCharacter.notes.forEach(note => {
+            // Clean up modifiers in notes
+            if (note.meatModifiers && 'Range' in note.meatModifiers) {
+                delete note.meatModifiers['Range'];
+            }
             addNote(note);
         });
     }
