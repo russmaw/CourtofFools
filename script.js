@@ -976,8 +976,52 @@ function saveCurrentCharacter() {
     // Save to localStorage
     saveCharacters();
     
-    // Update the dropdown to reflect the new name
-    createCustomDropdown();
+    // Update the dropdown options without recreating the entire structure
+    const select = document.getElementById('characterSelect');
+    const sortSelect = document.querySelector('.sort-select');
+    if (select && sortSelect) {
+        // Clear existing options except the first one
+        while (select.options.length > 1) {
+            select.remove(1);
+        }
+        
+        // Get current sort value
+        const sortBy = sortSelect.value;
+        
+        // Create a copy of characters array for sorting
+        const sortedCharacters = [...characters].sort((a, b) => {
+            switch (sortBy) {
+                case 'name':
+                    return (a.name || 'Unnamed Character').localeCompare(b.name || 'Unnamed Character');
+                case 'profession':
+                    return (a.profession || '').localeCompare(b.profession || '');
+                case 'advancedProfession':
+                    return (a.advancedProfession || '').localeCompare(b.advancedProfession || '');
+                default:
+                    return 0;
+            }
+        });
+        
+        // Add sorted options
+        sortedCharacters.forEach(char => {
+            const option = document.createElement('option');
+            option.value = char.id;
+            
+            // Create a formatted display string
+            let displayText = char.name || 'Unnamed Character';
+            if (char.profession || char.advancedProfession) {
+                displayText += ' - ';
+                if (char.profession) displayText += char.profession;
+                if (char.advancedProfession) displayText += ` (${char.advancedProfession})`;
+            }
+            
+            option.textContent = displayText;
+            select.appendChild(option);
+        });
+        
+        // Restore current selection
+        select.value = currentCharacter.id;
+    }
     
     // Remove unsaved changes indicator
     saveCharacterBtn.classList.remove('unsaved-changes');
