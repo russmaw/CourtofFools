@@ -239,7 +239,7 @@ function setupEventListeners() {
                 alert('Please select a character to print');
                 return;
             }
-            window.print();
+            generatePDF();
         });
     }
     
@@ -1511,6 +1511,59 @@ function handleProfessionChange() {
 function handleAdvancedProfessionChange() {
     console.log('Advanced profession changed');
     elements.saveCharacterBtn.classList.add('unsaved-changes');
+}
+
+// Generate PDF of character profile
+function generatePDF() {
+    if (!currentCharacter) return;
+
+    // Create a temporary container for the PDF content
+    const container = document.createElement('div');
+    container.className = 'pdf-container';
+    
+    // Clone the character profile
+    const profileClone = elements.characterProfile.cloneNode(true);
+    
+    // Remove buttons and interactive elements
+    const buttonsToRemove = profileClone.querySelectorAll('button, input, textarea, select');
+    buttonsToRemove.forEach(element => {
+        if (element) {
+            // Replace inputs and textareas with their values
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                const span = document.createElement('span');
+                span.textContent = element.value || '';
+                element.parentNode.replaceChild(span, element);
+            } else {
+                element.remove();
+            }
+        }
+    });
+    
+    // Add the cloned profile to the container
+    container.appendChild(profileClone);
+    
+    // Configure PDF options
+    const opt = {
+        margin: 10,
+        filename: `${currentCharacter.name || 'character'}-profile.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+            scale: 2,
+            useCORS: true,
+            logging: false
+        },
+        jsPDF: { 
+            unit: 'mm', 
+            format: 'a4', 
+            orientation: 'portrait' 
+        }
+    };
+    
+    // Generate the PDF
+    html2pdf().set(opt).from(container).save().then(() => {
+        // Clean up the temporary container
+        container.remove();
+    });
 }
 
 document.addEventListener('DOMContentLoaded', init); 

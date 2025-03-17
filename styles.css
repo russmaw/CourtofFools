@@ -744,4 +744,98 @@ select {
     width: 100%;
     max-width: 400px;
     margin: 0 auto var(--spacing);
+}
+
+/* PDF Generation Styles */
+.pdf-container {
+    position: fixed;
+    left: -9999px;
+    top: -9999px;
+    width: 210mm; /* A4 width */
+    padding: 20mm; /* A4 margins */
+    background: white;
+    box-sizing: border-box;
+}
+
+.pdf-container .character-profile {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+}
+
+.pdf-container .chart-container {
+    max-width: 100%;
+    margin: 20px auto;
+}
+
+.pdf-container .stat-dropdowns,
+.pdf-container .modifier-controls,
+.pdf-container .delete-btn,
+.pdf-container .save-btn,
+.pdf-container .add-modifier-btn,
+.pdf-container .remove-modifier-btn,
+.pdf-container .secondary-btn {
+    display: none;
+}
+
+.pdf-container .magical-item,
+.pdf-container .note {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+}
+
+.pdf-container .item-name,
+.pdf-container .note-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.pdf-container .item-description,
+.pdf-container .note-content {
+    margin-bottom: 10px;
+    display: block;
+}
+
+.pdf-container .stat-modifier {
+    display: inline-block;
+    margin-right: 15px;
+    margin-bottom: 5px;
+}
+
+.pdf-container .stat-modifier label {
+    margin-right: 5px;
+}
+
+.pdf-container .stat-modifier select {
+    display: none;
+}
+
+.pdf-container .stat-modifier::after {
+    content: attr(data-value);
+    margin-left: 5px;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    .pdf-container,
+    .pdf-container * {
+        visibility: visible;
+    }
+    .pdf-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+    }
 } 
