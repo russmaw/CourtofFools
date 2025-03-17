@@ -1,0 +1,8 @@
+[33mcommit b03c80fdcda461bf61bc56085df822ab4a49bca6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Rev <russmaw@gmail.com>
+Date:   Mon Mar 17 15:21:45 2025 -0400
+
+    Updated print styles to fix chart visibility
+
+ styles.css | 102 [32m+++++++++++++++++++++++++++++++++[m[31m----------------------------[m
+ 1 file changed, 55 insertions(+), 47 deletions(-)
